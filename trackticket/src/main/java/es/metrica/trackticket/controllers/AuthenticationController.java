@@ -18,9 +18,8 @@ public class AuthenticationController {
 	
 	@PostMapping("/login")
 	@Operation(summary = "Iniciar sesión")
-	@ApiResponse(responseCode = "200", description = "Usuario logeado correctamente")
-	public ResponseEntity<AuthResponseDTO> login(@RequestBody Login RequestDTO dto) {
-		return ResponseEntity.ok(new AuthResponseDTO("token-falso", "usuario_falso"));
+	public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO dto) {
+		return ResponseEntity.ok(new LoginResponseDTO("token-falso", "usuario_falso"));
 	}
 	
 	@PostMapping("/logout")

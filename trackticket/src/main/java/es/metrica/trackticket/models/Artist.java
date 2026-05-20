@@ -19,7 +19,7 @@ public class Artist {
 	@Column(name = "id_artist")
 	private Long idArtist;
 	
-	@Column(name= "external_id_artist", unique = true)
+	@Column(name= "external_id_artist", unique = true, nullable = false)
 	private String externalIdArtist;
 	
 	@Column(name = "artist_name", nullable = false)

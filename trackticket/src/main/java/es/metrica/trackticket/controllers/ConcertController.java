@@ -26,7 +26,7 @@ public class ConcertController {
 	
 	@PostMapping("/details")
 	@Operation(summary = "Ver detalles de un concierto")
-	public ResponseEntity<ConcertResponseDTO> getConcertDetails(@RequestParam Long idConcert) {
-		return ResponseEntity.ok(null);
+	public ResponseEntity<ConcertResponseDTO> getConcertDetails(@RequestParam String idConcertTicketmaster) {
+		return ResponseEntity.ok(new ConcertResponseDTO());
 	}
 }

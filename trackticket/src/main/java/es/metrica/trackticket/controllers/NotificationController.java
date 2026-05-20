@@ -32,7 +32,7 @@ public class NotificationController {
 	@PostMapping("/unread-count")
 	@Operation(summary = "Contar notificaciones no leídas")
 	public ResponseEntity<CountResponseDTO> countUnread(@RequestBody TokenRequestDTO dto) {
-		return ResponseEntity.ok(new CountResponseDTO(0));
+		return ResponseEntity.ok(new CountResponseDTO());
 	}
 	
 	@PostMapping("/read")
@@ -48,5 +48,4 @@ public class NotificationController {
 	public ResponseEntity<Void> deleteNotification(@RequestBody NotificationRequestDTO dto) {
 		return ResponseEntity.noContent().build();
 	}
-	
 }
