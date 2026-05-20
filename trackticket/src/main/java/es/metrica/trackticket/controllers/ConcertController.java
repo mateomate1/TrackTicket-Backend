@@ -2,40 +2,31 @@ package es.metrica.trackticket.controllers;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/concerts")
+@Tag(name = "Concerts", description = "Endpoints para búsqueda de conciertos")
 public class ConcertController {
 	
-
-	@GetMapping("/search")
-	public ResponseEntity<List<Void>> searchConcerts(@RequestBody SearchDTO dto) {
-		
+	@PostMapping("/search")
+	@Operation(summary = "Buscar conciertos", description = "Buscar por fecha (obligatorio) y artista/región")
+	public ResponseEntity<List<ConcertResponseDTO>> searchConcertsList(@RequestBody ConcertSearchRequestDTO dto) {
+		return ResponseEntity.ok(List.of());
 	}
 	
-	@GetMapping("/{idConcert}")
-	public ResponseEntity<Void> getConcertDetails(@PathVariable Long id) {
-		
+	@PostMapping("/details")
+	@Operation(summary = "Ver detalles de un concierto")
+	public ResponseEntity<ConcertResponseDTO> getConcertDetails(@RequestParam Long idConcert) {
+		return ResponseEntity.ok(null);
 	}
-	
-	/*
-	 * @GetMapping("/search")
-	 * public ResponseEntity<List<ConcertResponseDTO>> searchConcerts(
-	 * @RequestParam String place,
-	 * @RequestParam String artist,
-	 * @RequestParam String date) {
-	 * 	return null;
-	 * }
-	 * 
-	 * @GetMapping("/{idConcert}")
-	 * public ResponseEntity<ConcertResponseDTO> getConcertDetails(@PathVariable("idConcert") String id) {
-	 * return null;
-	 * }
-	 */
 }

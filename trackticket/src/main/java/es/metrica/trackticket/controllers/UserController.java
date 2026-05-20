@@ -1,95 +1,32 @@
 package es.metrica.trackticket.controllers;
 
-import java.util.List;
-
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/users")
+@Tag(name = "Users", description = "Endpoints para la gestión de la cuenta del usuario")
 public class UserController {
 	
 	@PostMapping("/register")
-	public ResponseEntity<Void> register(@RequestBody RegisterDTO dto) {
-		return null;
+	@Operation(summary = "Registrar usuario")
+	@ApiResponse(responseCode = "201", description = "Usuario registrado correctamente")
+	public ResponseEntity<Void> register(@RequestBody RegisterRequestDTO dto) {
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
-	@DeleteMapping("/delete")
-	public ResponseEntity<Void> delete(@RequestBody DeleteDTO dto) {
-		
+	@PostMapping("/delete")
+	@Operation(summary = "Eliminar cuanta de usuario")
+	@ApiResponse(responseCode = "204", description = "Cuanta eliminada correctamente")
+	public ResponseEntity<Void> deleteAccount(@RequestBody TokenRequestDTO dto) {
+		return ResponseEntity.noContent().build();
 	}
-	
-	@GetMapping("/favartists")
-	public ResponseEntity<List<Void>> favArtistList(@RequestHeader("user") String user) {
-		//TODO: Revisar cómo identificar usuario
-	}
-	
-	@PostMapping("/favartists/{idArtist}")
-	public ResponseEntity<Void> addFavArtist(@RequestHeader("user") String user, @PathVariable Long id, @RequestBody FavArtistDTO) {
-		//TODO: Revisar cómo identificar usuario
-	}
-	
-	@DeleteMapping("/favartists/{idArtist}")
-	public ResponseEntity<Void> delFavArtist(@RequestHeader("user") String user, @PathVariable Long id) {
-		//TODO: Revisar cómo identificar usuario
-	}
-	
-	@GetMapping("/favconcerts")
-	public ResponseEntity<List<Void>> favConcertList(@RequestHeader("user") String user) {
-		//TODO: Revisar cómo identificar usuario
-	}
-	
-	@PostMapping("/favconcerts/{idConcert}")
-	public ResponseEntity<Void> addFavConcert(@RequestHeader("user") String user, @PathVariable Long id, @RequestBody FavConcertDTO) {
-		//TODO: Revisar cómo identificar usuario
-	}
-	
-	@DeleteMapping("/favconcerts/{idConcert}")
-	public ResponseEntity<Void> delFavConcert(@RequestHeader("user") String user, @PathVariable Long id) {
-		//TODO: Revisar cómo identificar usuario
-	}
-	
-	/*
-	 * @DeleteMapping("/user")
-	 * public ResponseEntity<Void> deleteAccount(@RequestHeader("Authorization") String token) {
-	 * return null;
-	 * }
-	 * 
-	 * @GetMapping("/user/favartists")
-	 * public ResponseEntity<List<ArtistResponseDTO>> getFavArtistList(@RequestHeader("Authorization") String token) {
-	 * return null;
-	 * }
-	 * 
-	 * @PostMapping("user/favartists/{idArtist}")
-	 * public ResponseEntity<Void> addFavArtist(@RequestHeader("Authorization") String token, @PathVariable("idArtist") String id) {
-	 * return null;
-	 * }
-	 * 
-	 * @DeleteMapping("user/favartists/{idArtist}")
-	 * public ResponseEntity<Void> delFavArtist(@RequestHeader("Authorization") String token, @PathVariable("idArtist") String id) {
-	 * return null;
-	 * }
-	 * 
-	 * @GetMapping("/user/favconcerts")
-	 * public ResponseEntity<List<Void>> favConcertList(@RequestHeader("Authorization") String token) {
-	 * return null
-	 * }
-	 * 
-	 * @PostMapping("user/favconcerts/{idConcert}")
-	 * public ResponseEntity<Void> addFavConcert(@RequestHeader("Authorization") String token, @PathVariable("idConcert") String id) {
-	 * return null;
-	 * }
-	 * @DeleteMapping("/favconcerts/{idConcert}")
-	 * public ResponseEntity<Void> delFavConcert(@RequestHeader("Authorization") String token, @PathVariable("idConcert") String id) {
-	 * return null;
-	 * }
-	 */
-	
 }
