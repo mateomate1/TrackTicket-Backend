@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import es.metrica.trackticket.dto.CountResponseDTO;
+import es.metrica.trackticket.dto.NotificationRequestDTO;
+import es.metrica.trackticket.dto.NotificationResponseDTO;
+import es.metrica.trackticket.dto.TokenRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,14 +23,14 @@ public class NotificationController {
 	
 	@PostMapping("/list")
 	@Operation(summary = "Listar notificaciones")
-	public ResponseEntity<List<NotificacionesResponseDTO>> getNotifications(@RequestBody TokenRequestDTO dto) {
+	public ResponseEntity<List<NotificationResponseDTO>> getNotifications(@RequestBody TokenRequestDTO dto) {
 		return ResponseEntity.ok(List.of());
 	}
 	
 	@PostMapping("/unread-count")
 	@Operation(summary = "Contar notificaciones no leídas")
 	public ResponseEntity<CountResponseDTO> countUnread(@RequestBody TokenRequestDTO dto) {
-		return ResponseEntity.ok(new CountResponseDTO());
+		return ResponseEntity.ok(new CountResponseDTO(0));
 	}
 	
 	@PostMapping("/read")

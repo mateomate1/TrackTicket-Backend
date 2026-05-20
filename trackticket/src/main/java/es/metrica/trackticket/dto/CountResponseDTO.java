@@ -7,6 +7,4 @@ public record CountResponseDTO(
 		@PositiveOrZero
 		Integer amount
 		
-		) {
-
-}
+		) {}

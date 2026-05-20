@@ -11,6 +11,4 @@ public record NotificationRequestDTO(
 		@NotNull(message = "Identificador de notificación obligatorio")
 		Long idNotification
 		
-		) {
-
-}
+		) {}

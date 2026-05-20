@@ -7,6 +7,4 @@ public record TokenRequestDTO(
 		@NotNull(message = "Token de usuario obligatorio")
 		String token
 		
-		) {
-
-}
+		) {}

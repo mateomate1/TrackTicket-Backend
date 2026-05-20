@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import es.metrica.trackticket.dto.LoginRequestDTO;
 import es.metrica.trackticket.dto.LoginResponseDTO;
+import es.metrica.trackticket.dto.TokenRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

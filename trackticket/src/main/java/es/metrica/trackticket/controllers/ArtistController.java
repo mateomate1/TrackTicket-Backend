@@ -18,6 +18,6 @@ public class ArtistController {
 	@PostMapping("/profile")
 	@Operation(summary = "Ver perfil de un artista")
 	public ResponseEntity<ArtistResponseDTO> getArtistProfile(@RequestParam String idArtistSpotify) {
-		return ResponseEntity.ok(new ArtistResponseDTO());
+		return ResponseEntity.ok(new ArtistResponseDTO(null, null, null, null));
 	}
 }
