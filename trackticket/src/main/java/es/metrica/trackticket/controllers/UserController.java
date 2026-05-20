@@ -12,12 +12,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import es.metrica.trackticket.dto.RegisterRequestDTO;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
 	
 	@PostMapping("/register")
-	public ResponseEntity<Void> register(@RequestBody RegisterDTO dto) {
+	public ResponseEntity<Void> register(@RequestBody RegisterRequestDTO dto) {
+	
 		return null;
 	}
 	
