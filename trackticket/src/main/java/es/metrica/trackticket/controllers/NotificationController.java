@@ -30,7 +30,7 @@ public class NotificationController {
 	@PostMapping("/unread-count")
 	@Operation(summary = "Contar notificaciones no leídas")
 	public ResponseEntity<CountResponseDTO> countUnread(@RequestBody TokenRequestDTO dto) {
-		return ResponseEntity.ok(new CountResponseDTO());
+		return ResponseEntity.ok(new CountResponseDTO(0));
 	}
 	
 	@PostMapping("/read")

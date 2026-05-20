@@ -1,5 +1,10 @@
 package es.metrica.trackticket.dto;
 
-public record TokenRequestDTO() {
+import jakarta.validation.constraints.NotNull;
 
-}
+public record TokenRequestDTO(
+		
+		@NotNull(message = "Token de usuario obligatorio")
+		String token
+		
+		) {}

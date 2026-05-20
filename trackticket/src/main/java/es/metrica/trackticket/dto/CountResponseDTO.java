@@ -1,5 +1,10 @@
 package es.metrica.trackticket.dto;
 
-public record CountResponseDTO() {
+import jakarta.validation.constraints.PositiveOrZero;
 
-}
+public record CountResponseDTO(
+		
+		@PositiveOrZero
+		Integer amount
+		
+		) {}
