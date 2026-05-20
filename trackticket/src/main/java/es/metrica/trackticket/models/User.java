@@ -36,15 +36,15 @@ public class User {
 	@ManyToMany
 	@JoinTable(
 			name = "users_favourite_artists",
-	joinColumns = @JoinColumn(name = "id_user"),
-	inverseJoinColumns = @JoinColumn(name = "id_artist"))
+			joinColumns = @JoinColumn(name = "id_user"),
+			inverseJoinColumns = @JoinColumn(name = "id_artist"))
 	private List<Artist> favouriteArtists = new ArrayList<>();
 	
 	@ManyToMany
 	@JoinTable(
 			name = "users_favourite_concerts",
-	joinColumns = @JoinColumn(name = "id_user"),
-	inverseJoinColumns = @JoinColumn(name = "id_concert"))
+			joinColumns = @JoinColumn(name = "id_user"),
+			inverseJoinColumns = @JoinColumn(name = "id_concert"))
 	private List<Concert> favouriteConcerts = new ArrayList<>();
 
 	public User(Long idUser, String userName, String email, String password) {
