@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.metrica.trackticket.dto.ConcertResponseDTO;
+import es.metrica.trackticket.dto.ConcertSearchRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -27,6 +28,6 @@ public class ConcertController {
 	@PostMapping("/details")
 	@Operation(summary = "Ver detalles de un concierto")
 	public ResponseEntity<ConcertResponseDTO> getConcertDetails(@RequestParam String idConcertTicketmaster) {
-		return ResponseEntity.ok(new ConcertResponseDTO());
+		return ResponseEntity.ok(new ConcertResponseDTO(null, null, null, null, null));
 	}
 }

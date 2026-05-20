@@ -27,7 +27,6 @@ public class Venue {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn (name = "id_address")
-	@Column (name = "venue_address")
 	private Address venueAddress;
 	
 	protected Venue() {}

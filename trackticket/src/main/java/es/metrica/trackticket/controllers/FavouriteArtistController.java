@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.metrica.trackticket.dto.ArtistResponseDTO;
+import es.metrica.trackticket.dto.FavouriteArtistRequestDTO;
+import es.metrica.trackticket.dto.TokenRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,7 +37,7 @@ public class FavouriteArtistController {
 	@PostMapping("/remove")
 	@Operation(summary = "Eliminar artista de favoritos")
 	@ApiResponse(responseCode = "204", description = "Artista eliminado correctamente")
-	public ResponseEntity<Void> addFavArtist(@RequestBody FavouriteArtistRequestDTO dto) {
+	public ResponseEntity<Void> removeFavArtist(@RequestBody FavouriteArtistRequestDTO dto) {
 		return ResponseEntity.noContent().build();
 	}
 	
