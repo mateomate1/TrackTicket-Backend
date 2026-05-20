@@ -7,13 +7,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-<<<<<<< HEAD
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-=======
-import es.metrica.trackticket.dto.RegisterRequestDTO;
->>>>>>> origin/develop
+
 
 @RestController
 @RequestMapping("/users")
@@ -21,17 +18,10 @@ import es.metrica.trackticket.dto.RegisterRequestDTO;
 public class UserController {
 	
 	@PostMapping("/register")
-<<<<<<< HEAD
 	@Operation(summary = "Registrar usuario")
 	@ApiResponse(responseCode = "201", description = "Usuario registrado correctamente")
 	public ResponseEntity<Void> register(@RequestBody RegisterRequestDTO dto) {
 		return ResponseEntity.status(HttpStatus.CREATED).build();
-=======
-	public ResponseEntity<Void> register(@RequestBody RegisterRequestDTO dto) {
-	
-		return null;
->>>>>>> origin/develop
-	}
 	
 	@PostMapping("/delete")
 	@Operation(summary = "Eliminar cuanta de usuario")
