@@ -1,20 +1,17 @@
 package es.metrica.trackticket.dto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 
 public record ConcertSearchRequestDTO(
 		
 		@NotNull(message = "La fecha es oligatoria de inicio")
-		LocalDate startDate,
+		LocalDateTime startDate,
 		
-		LocalDate finalDay,
+		LocalDateTime finalDay,
 		
-		@Positive(message = "Identificador de usuario debe ser positivo")
-		Long artista,
+		String artista,
 		
 		String location
 		
