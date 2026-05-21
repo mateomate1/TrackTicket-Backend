@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("favourites/concerts")
+@RequestMapping("/v1/favourites/concerts")
 @Tag(name = "Favourite concerts", description = "Endpoints para gestión de conciertos favoritos")
 public class FavouriteConcertController {
 	

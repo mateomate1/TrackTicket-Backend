@@ -1,0 +1,462 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8080/api
+  description: Generated server url
+tags:
+- name: Concerts
+  description: Endpoints para búsqueda de conciertos
+- name: Notifications
+  description: Endpoints para gestión de notificaciones
+- name: Favourite concerts
+  description: Endpoints para gestión de conciertos favoritos
+- name: Favourite artists
+  description: Endpoints para gestión de artistas favoritos
+- name: Users
+  description: Endpoints para la gestión de la cuenta del usuario
+- name: Artists
+  description: Endpoints para artistas
+- name: Authentication
+  description: Endpoints para login y logout
+paths:
+  /v1/users/register:
+    post:
+      tags:
+      - Users
+      summary: Registrar usuario
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequestDTO"
+        required: true
+      responses:
+        "201":
+          description: Usuario registrado correctamente
+  /v1/users/delete:
+    post:
+      tags:
+      - Users
+      summary: Eliminar cuanta de usuario
+      operationId: deleteAccount
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TokenRequestDTO"
+        required: true
+      responses:
+        "204":
+          description: Cuanta eliminada correctamente
+  /v1/notifications/unread-count:
+    post:
+      tags:
+      - Notifications
+      summary: Contar notificaciones no leídas
+      operationId: countUnread
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TokenRequestDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CountResponseDTO"
+  /v1/notifications/read:
+    post:
+      tags:
+      - Notifications
+      summary: Marcar notificación como leída
+      operationId: readNotification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotificationRequestDTO"
+        required: true
+      responses:
+        "204":
+          description: Notificación marcada como leída
+  /v1/notifications/list:
+    post:
+      tags:
+      - Notifications
+      summary: Listar notificaciones
+      operationId: getNotifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TokenRequestDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NotificationResponseDTO"
+  /v1/notifications/delete:
+    post:
+      tags:
+      - Notifications
+      summary: Eliminar una notificación
+      operationId: deleteNotification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotificationRequestDTO"
+        required: true
+      responses:
+        "204":
+          description: Notificación eliminada
+  /v1/favourites/concerts/remove:
+    post:
+      tags:
+      - Favourite concerts
+      summary: Eliminar concierto de favoritos
+      operationId: removeFavConcert
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FavouriteConcertRequestDTO"
+        required: true
+      responses:
+        "204":
+          description: Concierto eliminado correctamente
+  /v1/favourites/concerts/list:
+    post:
+      tags:
+      - Favourite concerts
+      summary: Listar conciertos favoritos
+      operationId: getFavConcertList
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TokenRequestDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ConcertResponseDTO"
+  /v1/favourites/concerts/add:
+    post:
+      tags:
+      - Favourite concerts
+      summary: Añadir concierto a favoritos
+      operationId: addFavConcert
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FavouriteConcertRequestDTO"
+        required: true
+      responses:
+        "201":
+          description: Concierto añadido correctamente
+  /v1/favourites/artists/remove:
+    post:
+      tags:
+      - Favourite artists
+      summary: Eliminar artista de favoritos
+      operationId: removeFavArtist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FavouriteArtistRequestDTO"
+        required: true
+      responses:
+        "204":
+          description: Artista eliminado correctamente
+  /v1/favourites/artists/list:
+    post:
+      tags:
+      - Favourite artists
+      summary: Listar artistas favoritos
+      operationId: getFavArtistList
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TokenRequestDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ArtistResponseDTO"
+  /v1/favourites/artists/add:
+    post:
+      tags:
+      - Favourite artists
+      summary: Añadir artista a favoritos
+      operationId: addFavArtist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FavouriteArtistRequestDTO"
+        required: true
+      responses:
+        "201":
+          description: Artista añadido correctamente
+  /v1/concerts/search:
+    post:
+      tags:
+      - Concerts
+      summary: Buscar conciertos
+      description: Buscar por fecha (obligatorio) y artista/región
+      operationId: searchConcertsList
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConcertSearchRequestDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ConcertResponseDTO"
+  /v1/concerts/details:
+    post:
+      tags:
+      - Concerts
+      summary: Ver detalles de un concierto
+      operationId: getConcertDetails
+      parameters:
+      - name: idConcertTicketmaster
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ConcertResponseDTO"
+  /v1/auth/logout:
+    post:
+      tags:
+      - Authentication
+      summary: Cerrar sesión
+      operationId: logout
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TokenRequestDTO"
+        required: true
+      responses:
+        "204":
+          description: Usuario cerró la sesión correctamente
+  /v1/auth/login:
+    post:
+      tags:
+      - Authentication
+      summary: Iniciar sesión
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequestDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/LoginResponseDTO"
+  /v1/artists/profile:
+    post:
+      tags:
+      - Artists
+      summary: Ver perfil de un artista
+      operationId: getArtistProfile
+      parameters:
+      - name: idArtistSpotify
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ArtistResponseDTO"
+components:
+  schemas:
+    RegisterRequestDTO:
+      required:
+      - email
+      - name
+      - password
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          maxLength: 2147483647
+          minLength: 8
+          type: string
+    TokenRequestDTO:
+      required:
+      - token
+      type: object
+      properties:
+        token:
+          type: string
+    CountResponseDTO:
+      type: object
+      properties:
+        amount:
+          type: integer
+          format: int32
+    NotificationRequestDTO:
+      required:
+      - idNotification
+      - token
+      type: object
+      properties:
+        token:
+          type: string
+        idNotification:
+          type: integer
+          format: int64
+    NotificationResponseDTO:
+      type: object
+      properties:
+        message:
+          type: string
+        type:
+          type: string
+        read:
+          type: boolean
+        launch:
+          type: string
+          format: date-time
+    FavouriteConcertRequestDTO:
+      type: object
+    ConcertResponseDTO:
+      type: object
+      properties:
+        idTicketMaster:
+          type: string
+        name:
+          type: string
+        date:
+          type: string
+          format: date-time
+        link:
+          type: string
+        venue:
+          $ref: "#/components/schemas/VenueDTO"
+    VenueDTO:
+      required:
+      - latitude
+      - longitude
+      - venueAddress
+      - venueCountry
+      - venueName
+      - venueState
+      type: object
+      properties:
+        venueName:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        venueAddress:
+          type: string
+        venueState:
+          type: string
+        venueCountry:
+          type: string
+    FavouriteArtistRequestDTO:
+      type: object
+    ArtistResponseDTO:
+      type: object
+      properties:
+        idArtist:
+          type: string
+        name:
+          type: string
+        linkList:
+          type: string
+        linkImage:
+          type: string
+    ConcertSearchRequestDTO:
+      required:
+      - startDate
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date-time
+        finalDay:
+          type: string
+          format: date-time
+        artist:
+          type: string
+        location:
+          type: string
+    LoginRequestDTO:
+      required:
+      - password
+      - user
+      type: object
+      properties:
+        user:
+          type: string
+        password:
+          maxLength: 2147483647
+          minLength: 8
+          type: string
+    LoginResponseDTO:
+      required:
+      - token
+      - username
+      type: object
+      properties:
+        token:
+          type: string
+        username:
+          type: string

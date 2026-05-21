@@ -1,18 +1,14 @@
 package es.metrica.trackticket.services;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestClient;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import es.metrica.trackticket.dto.ConcertResponseDTO;
 import es.metrica.trackticket.dto.ConcertSearchRequestDTO;
 import es.metrica.trackticket.dto.VenueDTO;
-import es.metrica.trackticket.services.SearchServiceImpl.TicketMasterEvent;
 
 public class SearchServiceImpl implements SearchService {
 
@@ -36,35 +32,40 @@ public class SearchServiceImpl implements SearchService {
 		TicketMasterResponse response = restClient.get().uri(uriBuilder -> {
 			uriBuilder.path("/events.json").queryParam("apikey", this.apiKey)
 
-					.queryParam("locale", "es").queryParam("keyword", dto.artista())
-					.queryParam("startDateTime", dto.date()) // String fecha inicio
-					.queryParam("size", 20);
+					.queryParam("locale", "es").queryParam("keyword", dto.artist())
+					.queryParam("startDateTime", dto.startDate().toString() + "Z")
+					.queryParam("size", 20)
+					.queryParam("sort", "date,asc");
 
-			if (dto.date() == null) { //fechaFin
-				uriBuilder.queryParam("endDateTime", "fechaInicio hora 23:59"); // string fecha fin
+			if (dto.finalDay() == null) {
+				uriBuilder.queryParam("endDateTime", dto.startDate().plusHours(23).plusMinutes(59).toString() + "Z");
 			} else {
-				uriBuilder.queryParam("endDateTime", dto.date()); // fechaFin
+				uriBuilder.queryParam("endDateTime", dto.finalDay().toString() + "Z");
 			}
 
-			if (dto.venue().venueAddress() != null) { // tiene que ser city
-				uriBuilder.queryParam("city", dto.venue().venueAddress());
+			if (dto.location() != null) {
+				uriBuilder.queryParam("city", dto.location());
 			}
 
-			if (dto.artista() != null) {
-				uriBuilder.queryParam("keyword", dto.artista());
+			if (dto.artist() != null) {
+				uriBuilder.queryParam("keyword", dto.artist());
 			}
 			return uriBuilder.build();
 		}).retrieve().body(TicketMasterResponse.class);
 
-		return response._embedded.events().stream().map(this::mapToConcertResponseDTO).toList();
+		if(response != null) {
+			return response._embedded().events().stream().map(this::mapToConcertResponseDTO).toList();
+		} else {
+			throw new IllegalArgumentException("Búsqueda sin resultados");
+		}
 	}
 
 	private boolean isValidRequest(ConcertSearchRequestDTO dto) {
-		if (dto.date() == null) { // fechaInicio
+		if (dto.startDate() == null) {
 			return false;
 		}
 
-		if (dto.artista() == null && dto.venue().venueAddress() == null) { // city, no venue
+		if (dto.artist() == null && dto.location() == null) {
 			return false;
 		}
 
@@ -73,23 +74,16 @@ public class SearchServiceImpl implements SearchService {
 
 	private ConcertResponseDTO mapToConcertResponseDTO(TicketMasterEvent event) {
 
-		String idConcert = "";
-		String nameConcert = "";
-		double latitude = 0.0;
-		double longitude = 0.0;
-		String venueName = "";
-		LocalDateTime concertDate = null;
-		String address = ""; // dirección completa con todo
-		String sellLink = "";
+		String idConcert = event.id();
+		String nameConcert = event.id();
+		double latitude = Double.parseDouble(event._embedded().venues().get(0).location().latitude());
+		double longitude = Double.parseDouble(event._embedded().venues().get(0).location().longitude());
+		String venueName = event._embedded().venues().getFirst().name();
+		LocalDateTime concertDate = LocalDateTime.parse(event.dates().start().dateTime().replace("Z", "")).plusHours(2);
+		String stateName = event._embedded().venues().getFirst().state().name();
+		String countryName = event._embedded().venues().getFirst().country().name();
+		String sellLink = event.url();
 
-		idConcert = event.id();
-		nameConcert = event.name();
-		latitude = Double.parseDouble(event._embedded().venues().get(0).location().latitude());
-		longitude = Double.parseDouble(event._embedded().venues().get(0).location().longitude());
-		venueName = event._embedded().venues().getFirst().name();
-		concertDate = LocalDateTime.parse(event.dates().start().dateTime().replace("Z", "")).plusHours(2); // hora
-																											// de
-																											// MAdrid
 		StringBuilder addressBuilder = new StringBuilder(event._embedded().venues().getFirst().address().line1());
 
 		if (event._embedded().venues().getFirst().address().line2() != null) {
@@ -98,14 +92,11 @@ public class SearchServiceImpl implements SearchService {
 
 		addressBuilder.append(", ").append(event._embedded().venues().getFirst().postalCode());
 		addressBuilder.append(", ").append(event._embedded().venues().getFirst().city().name());
-		addressBuilder.append(", ").append(event._embedded().venues().getFirst().state().name());
-		addressBuilder.append(", ").append(event._embedded().venues().getFirst().country().name());
 
-		address = addressBuilder.toString();
+		String address = addressBuilder.toString();
 
-		sellLink = event.url();
-
-		return new ConcertResponseDTO();
+		return new ConcertResponseDTO(idConcert, nameConcert, concertDate, sellLink,
+				new VenueDTO(venueName, latitude, longitude, address, stateName, countryName));
 	}
 
 	private record TicketMasterResponse(TicketMasterEmbedded _embedded) {
