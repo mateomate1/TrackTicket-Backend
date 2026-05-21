@@ -8,13 +8,14 @@ import jakarta.validation.constraints.Positive;
 
 public record ConcertSearchRequestDTO(
 		
-		@NotNull(message = "La fecha es oligatoria")
-		LocalDate date,
+		@NotNull(message = "La fecha es oligatoria de inicio")
+		LocalDate startDate,
+		
+		LocalDate finalDay,
 		
 		@Positive(message = "Identificador de usuario debe ser positivo")
 		Long artista,
 		
-		@Valid
-		VenueDTO venue
+		String location
 		
 		) {}
