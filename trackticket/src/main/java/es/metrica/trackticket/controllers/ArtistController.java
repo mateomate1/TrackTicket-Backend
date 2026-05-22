@@ -11,13 +11,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/artists")
+@RequestMapping("/v1/artists")
 @Tag(name = "Artists", description = "Endpoints para artistas")
 public class ArtistController {
 	
 	@PostMapping("/profile")
 	@Operation(summary = "Ver perfil de un artista")
 	public ResponseEntity<ArtistResponseDTO> getArtistProfile(@RequestParam String idArtistSpotify) {
-		return ResponseEntity.ok(new ArtistResponseDTO(null, null, null, null));
+		return ResponseEntity.ok(new ArtistResponseDTO("idArtist", "nameArtist", "linkSpotifyList", "linkImage"));
 	}
 }

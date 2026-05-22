@@ -11,7 +11,7 @@ public record ConcertSearchRequestDTO(
 		
 		LocalDateTime finalDay,
 		
-		String artista,
+		String artist,
 		
 		String location
 		

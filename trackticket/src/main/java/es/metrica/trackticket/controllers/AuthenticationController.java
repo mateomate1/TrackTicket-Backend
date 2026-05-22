@@ -14,14 +14,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/v1/auth")
 @Tag(name = "Authentication", description = "Endpoints para login y logout")
 public class AuthenticationController {
 	
 	@PostMapping("/login")
 	@Operation(summary = "Iniciar sesión")
 	public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO dto) {
-		return ResponseEntity.ok(new LoginResponseDTO("token-falso", "usuario_falso"));
+		return ResponseEntity.ok(new LoginResponseDTO("token", "usuario"));
 	}
 	
 	@PostMapping("/logout")
