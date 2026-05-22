@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import es.metrica.trackticket.dto.ConcertResponseDTO;
 import es.metrica.trackticket.dto.ConcertSearchRequestDTO;
 import es.metrica.trackticket.dto.VenueDTO;
+import es.metrica.trackticket.services.SearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -20,11 +21,17 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/v1/concerts")
 @Tag(name = "Concerts", description = "Endpoints para búsqueda de conciertos")
 public class ConcertController {
+	
+	private final SearchService searchService;
+	
+	public ConcertController(SearchService searchService) {
+		this.searchService = searchService;
+	}
 
 	@PostMapping("/search")
 	@Operation(summary = "Buscar conciertos", description = "Buscar por fecha (obligatorio) y artista/región")
 	public ResponseEntity<List<ConcertResponseDTO>> searchConcertsList(@RequestBody ConcertSearchRequestDTO dto) {
-		return ResponseEntity.ok(List.of());
+		return ResponseEntity.ok(searchService.searchConcerts(dto));
 	}
 
 	@PostMapping("/details")

@@ -1,6 +1,7 @@
 package es.metrica.trackticket.services;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -30,19 +31,20 @@ public class SearchServiceImpl implements SearchService {
 			throw new IllegalArgumentException(
 					"Los parámetros de búsqueda no son válidos. Debe haber fecha y artista y/o ciudad.");
 		}
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 		TicketMasterResponse response = restClient.get().uri(uriBuilder -> {
 			uriBuilder.path("/events.json").queryParam("apikey", this.apiKey)
-
 					.queryParam("locale", "es").queryParam("keyword", dto.artist())
-					.queryParam("startDateTime", dto.startDate().toString() + "Z")
+					.queryParam("startDateTime", dto.startDate().format(formatter))
 					.queryParam("size", 20)
 					.queryParam("sort", "date,asc");
 
 			if (dto.finalDay() == null) {
-				uriBuilder.queryParam("endDateTime", dto.startDate().plusHours(23).plusMinutes(59).toString() + "Z");
+				uriBuilder.queryParam("endDateTime", dto.startDate().plusHours(23).plusMinutes(59).format(formatter));
 			} else {
-				uriBuilder.queryParam("endDateTime", dto.finalDay().toString() + "Z");
+				uriBuilder.queryParam("endDateTime", dto.finalDay().format(formatter));
 			}
 
 			if (dto.location() != null) {
