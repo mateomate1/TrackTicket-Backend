@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/v1/users")
 @Tag(name = "Users", description = "Endpoints para la gestión de la cuenta del usuario")
 public class UserController {
 	

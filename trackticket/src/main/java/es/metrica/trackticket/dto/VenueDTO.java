@@ -8,7 +8,10 @@ public record VenueDTO(
 		String venueName,
 		
 		@NotNull
-		Double venueLocation,
+		Double latitude,
+		
+		@NotNull
+		Double longitude,
 		
 		@NotNull
 		String venueAddress,

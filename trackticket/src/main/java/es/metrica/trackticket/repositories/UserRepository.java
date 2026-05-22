@@ -10,12 +10,12 @@ import es.metrica.trackticket.models.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	Optional<User> findByUsername(String username);
+	Optional<User> findByUserName(String username);
 	
 	Optional<User> findByEmail(String email);
 	
 	boolean existsByEmail(String email);
 	
-	boolean existsByUsername(String email);
+	boolean existsByUserName(String email);
 	
 }

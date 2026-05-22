@@ -13,7 +13,7 @@ public interface ArtistRepository extends JpaRepository<Artist, Long>{
 
 	Optional<Artist> findByExternalIdArtist(String externalIdArtist);
 	
-	List<Artist> findByFirstLineStartingWith(String artistName);
+	List<Artist> findByartistNameStartingWith(String artistName);
 
 	List<Artist> findByMusicGenre(String genre);
 	
