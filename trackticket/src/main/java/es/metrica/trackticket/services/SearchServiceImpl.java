@@ -1,7 +1,6 @@
 package es.metrica.trackticket.services;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -147,4 +146,5 @@ public class SearchServiceImpl implements SearchService {
 
 	private record TicketMasterLocation(String longitude, String latitude) {
 	}
+
 }

@@ -13188,7 +13188,6 @@ class SearchServiceImplTest {
 		Exception e = assertThrows(IllegalArgumentException.class, () -> searchService.searchConcerts(dto));
 		assertEquals("Los parámetros de búsqueda no son válidos. Debe haber fecha y artista y/o ciudad.",
 				e.getMessage());
-
 	}
 
 	@Test
