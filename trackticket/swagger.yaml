@@ -381,8 +381,10 @@ components:
           type: string
         date:
           type: string
-          format: date-time
+          format: date
         link:
+          type: string
+        artistName:
           type: string
         venue:
           $ref: "#/components/schemas/VenueDTO"

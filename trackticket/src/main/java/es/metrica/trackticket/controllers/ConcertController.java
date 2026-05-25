@@ -1,6 +1,6 @@
 package es.metrica.trackticket.controllers;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -37,7 +37,7 @@ public class ConcertController {
 	@PostMapping("/details")
 	@Operation(summary = "Ver detalles de un concierto")
 	public ResponseEntity<ConcertResponseDTO> getConcertDetails(@RequestParam String idConcertTicketmaster) {
-		return ResponseEntity.ok(new ConcertResponseDTO("idConcert", "name", LocalDateTime.now(), "link",
+		return ResponseEntity.ok(new ConcertResponseDTO("idConcert", "name", LocalDate.now(), "link", "artistName",
 				new VenueDTO("name", 0.0, 0.0, "address", "state", "country")));
 	}
 }

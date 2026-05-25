@@ -1,5 +1,6 @@
 package es.metrica.trackticket.services;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -31,36 +32,37 @@ public class SearchServiceImpl implements SearchService {
 			throw new IllegalArgumentException(
 					"Los parámetros de búsqueda no son válidos. Debe haber fecha y artista y/o ciudad.");
 		}
-		
+
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 		TicketMasterResponse response = restClient.get().uri(uriBuilder -> {
-			uriBuilder.path("/events.json").queryParam("apikey", this.apiKey)
-					.queryParam("locale", "es").queryParam("keyword", dto.artist())
-					.queryParam("startDateTime", dto.startDate().format(formatter))
-					.queryParam("size", 20)
-					.queryParam("sort", "date,asc");
+			uriBuilder.path("/events.json").queryParam("apikey", this.apiKey).queryParam("locale", "es")
+					.queryParam("startDateTime", dto.startDate().format(formatter)).queryParam("includeTBA", "no")
+					.queryParam("includeTBD", "no").queryParam("size", 20).queryParam("sort", "date,asc");
 
-			if (dto.finalDay() == null) {
-				uriBuilder.queryParam("endDateTime", dto.startDate().plusHours(23).plusMinutes(59).format(formatter));
-			} else {
+			if (dto.finalDay() != null) {
 				uriBuilder.queryParam("endDateTime", dto.finalDay().format(formatter));
 			}
 
-			if (dto.location() != null) {
+			if (dto.location() != null && !dto.location().isEmpty()) {
 				uriBuilder.queryParam("city", dto.location());
 			}
 
-			if (dto.artist() != null) {
+			if (dto.artist() != null && !dto.artist().isBlank()) {
 				uriBuilder.queryParam("keyword", dto.artist());
 			}
+
 			return uriBuilder.build();
 		}).retrieve().body(TicketMasterResponse.class);
 
-		if(response != null) {
-			return response._embedded().events().stream().map(this::mapToConcertResponseDTO).toList();
+		if (response != null && response._embedded() != null) {
+			try {
+				return response._embedded().events().stream().map(this::mapToConcertResponseDTO).toList();
+			} catch (NullPointerException e) {
+				return List.of();
+			}
 		} else {
-			throw new IllegalArgumentException("Búsqueda sin resultados");
+			return List.of();
 		}
 	}
 
@@ -69,7 +71,7 @@ public class SearchServiceImpl implements SearchService {
 			return false;
 		}
 
-		if (dto.artist() == null && dto.location() == null) {
+		if ((dto.artist() == null || dto.artist().isBlank()) && (dto.location() == null || dto.location().isBlank())) {
 			return false;
 		}
 
@@ -79,14 +81,15 @@ public class SearchServiceImpl implements SearchService {
 	private ConcertResponseDTO mapToConcertResponseDTO(TicketMasterEvent event) {
 
 		String idConcert = event.id();
-		String nameConcert = event.id();
+		String nameConcert = event.name();
 		double latitude = Double.parseDouble(event._embedded().venues().get(0).location().latitude());
 		double longitude = Double.parseDouble(event._embedded().venues().get(0).location().longitude());
 		String venueName = event._embedded().venues().getFirst().name();
-		LocalDateTime concertDate = LocalDateTime.parse(event.dates().start().dateTime().replace("Z", "")).plusHours(2);
+		LocalDate concertDate = LocalDate.parse(event.dates().start().localDate());
 		String stateName = event._embedded().venues().getFirst().state().name();
 		String countryName = event._embedded().venues().getFirst().country().name();
 		String sellLink = event.url();
+		String artistName = event._embedded().attractions().get(0).name();
 
 		StringBuilder addressBuilder = new StringBuilder(event._embedded().venues().getFirst().address().line1());
 
@@ -99,7 +102,7 @@ public class SearchServiceImpl implements SearchService {
 
 		String address = addressBuilder.toString();
 
-		return new ConcertResponseDTO(idConcert, nameConcert, concertDate, sellLink,
+		return new ConcertResponseDTO(idConcert, nameConcert, concertDate, sellLink, artistName,
 				new VenueDTO(venueName, latitude, longitude, address, stateName, countryName));
 	}
 
@@ -116,10 +119,14 @@ public class SearchServiceImpl implements SearchService {
 	private record TicketMasterDates(TicketMasterStart start) {
 	}
 
-	private record TicketMasterStart(String dateTime) {
+	private record TicketMasterStart(String localDate) {
 	}
 
-	private record TicketMasterEmbeddedVenues(List<TicketMasterVenue> venues) {
+	private record TicketMasterEmbeddedVenues(List<TicketMasterVenue> venues,
+			List<TickerMasterAttractions> attractions) {
+	}
+
+	private record TickerMasterAttractions(String name) {
 	}
 
 	private record TicketMasterVenue(String name, String postalCode, TicketMasterLocation location,

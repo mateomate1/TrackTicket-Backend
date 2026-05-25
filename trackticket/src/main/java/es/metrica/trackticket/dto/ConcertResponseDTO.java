@@ -1,13 +1,14 @@
 package es.metrica.trackticket.dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public record ConcertResponseDTO (
 		
 		String idTicketMaster,
 		String name, 
-		LocalDateTime date, 
+		LocalDate date, 
 		String link,
+		String artistName,
 		VenueDTO venue
 		
 		) {}
