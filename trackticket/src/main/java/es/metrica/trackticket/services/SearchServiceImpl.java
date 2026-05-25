@@ -51,14 +51,18 @@ public class SearchServiceImpl implements SearchService {
 			if (dto.artist() != null && !dto.artist().isBlank()) {
 				uriBuilder.queryParam("keyword", dto.artist());
 			}
-			
+
 			return uriBuilder.build();
 		}).retrieve().body(TicketMasterResponse.class);
 
 		if (response != null && response._embedded() != null) {
-			return response._embedded().events().stream().map(this::mapToConcertResponseDTO).toList();
+			try {
+				return response._embedded().events().stream().map(this::mapToConcertResponseDTO).toList();
+			} catch (NullPointerException e) {
+				return List.of();
+			}
 		} else {
-			throw new IllegalArgumentException("Búsqueda sin resultados");
+			return List.of();
 		}
 	}
 
@@ -67,7 +71,7 @@ public class SearchServiceImpl implements SearchService {
 			return false;
 		}
 
-		if (dto.artist() == null && dto.location() == null) {
+		if ((dto.artist() == null || dto.artist().isBlank()) && (dto.location() == null || dto.location().isBlank())) {
 			return false;
 		}
 
