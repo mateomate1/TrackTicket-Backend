@@ -1,6 +1,5 @@
 package es.metrica.trackticket.services;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -10,9 +9,7 @@ import org.springframework.web.client.RestClient;
 
 import es.metrica.trackticket.dto.ConcertResponseDTO;
 import es.metrica.trackticket.dto.ConcertSearchRequestDTO;
-import es.metrica.trackticket.dto.VenueDTO;
 import es.metrica.trackticket.dto.mapper.ConcertSearchMapper;
-import es.metrica.trackticket.dto.mapper.ConcertSearchMapper.TicketMasterEvent;
 import es.metrica.trackticket.dto.mapper.ConcertSearchMapper.TicketMasterResponse;
 import es.metrica.trackticket.exception.ResourceNotFoundException;
 

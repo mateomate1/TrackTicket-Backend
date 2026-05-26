@@ -7,18 +7,20 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import es.metrica.trackticket.dto.ArtistResponseDTO;
 import es.metrica.trackticket.dto.mapper.ArtistMapper;
+import es.metrica.trackticket.dto.mapper.ArtistMapper.SpotifyArtistSearchResponse;
 import es.metrica.trackticket.exception.ResourceNotFoundException;
 
+@Service
 public class ArtistProfileServiceImpl implements ArtistProfileService {
 
 	private RestClient restClientArtistSearch;
 	private RestClient restClientToken;
-	private String spotifyApiUrl;
-	private String spotifyTokenUrl;
 	private String token;
 	private LocalDateTime tokenExpiration;
 	private String clientId;
@@ -27,10 +29,8 @@ public class ArtistProfileServiceImpl implements ArtistProfileService {
 	public ArtistProfileServiceImpl(RestClient.Builder restClientBuilder, @Value("${spotify.api.url}") String apiUrl,
 			@Value("${spotify.token.url}") String tokenUrl, @Value("${spotify.client.id}") String clientId,
 			@Value("${spotify.client.secret}") String clientSecret) {
-		this.restClientArtistSearch = restClientBuilder.baseUrl(apiUrl).build();
-		this.restClientToken = restClientBuilder.baseUrl(tokenUrl).build();
-		this.spotifyApiUrl = apiUrl;
-		this.spotifyTokenUrl = tokenUrl;
+		this.restClientArtistSearch = restClientBuilder.clone().baseUrl(apiUrl).build();
+		this.restClientToken = restClientBuilder.clone().baseUrl(tokenUrl).build();
 		this.tokenExpiration = LocalDateTime.now().minusSeconds(1);
 		this.clientId = clientId;
 		this.clientSecret = clientSecret;
@@ -44,7 +44,7 @@ public class ArtistProfileServiceImpl implements ArtistProfileService {
 			credentials = Base64.getEncoder().encodeToString(credentials.getBytes());
 
 			SpotifyTokenResponse response = restClientToken.post().contentType(MediaType.APPLICATION_FORM_URLENCODED)
-					.header("Authorization", "Basic" + credentials).body("grant_type=client_credentials").retrieve()
+					.header("Authorization", "Basic " + credentials).body("grant_type=client_credentials").retrieve()
 					.body(SpotifyTokenResponse.class);
 
 			this.token = response.access_token();
@@ -57,12 +57,12 @@ public class ArtistProfileServiceImpl implements ArtistProfileService {
 	@Override
 	public ArtistResponseDTO getArtist(String artistName) {
 
-		if (artistName != null && !artistName.isBlank()) {
+		if (artistName == null || artistName.isBlank()) {
 			throw new IllegalArgumentException("El nombre del artista no puede estar vacío.");
 		}
 
 		SpotifyArtistSearchResponse response = restClientArtistSearch.get().uri(uriBuilder -> {
-			uriBuilder.path("/search?").queryParam("q", artistName).queryParam("type", "artist")
+			uriBuilder.path("/search").queryParam("q", artistName).queryParam("type", "artist")
 					.queryParam("market", "ES").queryParam("limit", 1);
 			return uriBuilder.build();
 		}).header("Authorization", "Bearer " + this.getToken()).retrieve().body(SpotifyArtistSearchResponse.class);
@@ -71,78 +71,55 @@ public class ArtistProfileServiceImpl implements ArtistProfileService {
 			throw new ResourceNotFoundException("No se encuentran resultados para ese artista.");
 		}
 
-		List<String> topTracks = this.getTopTracks(response.artists().items().getFirst().id());
+		List<String> albums = this.getAlbums(response.artists().items().getFirst().id());
 		String playlistUrl = this.getPlaylist(artistName);
 
-		return ArtistMapper.mapToArtistResponseDTO(response, topTracks, playlistUrl);
+		return ArtistMapper.mapToArtistResponseDTO(artistName, response, albums, playlistUrl);
 	}
 
-	private List<String> getTopTracks(String artistId) {
+	private List<String> getAlbums(String artistId) {
 
 		SpotifyTopTracksResponse response = restClientArtistSearch.get().uri(uriBuilder -> {
-			uriBuilder.path("/artists/{id}/top-tracks").queryParam("market", "ES");
+			uriBuilder.path("/artists/{id}/albums").queryParam("market", "ES").queryParam("include_groups", "albums")
+					.queryParam("limit", 10);
 			return uriBuilder.build(artistId);
 		}).header("Authorization", "Bearer " + this.getToken()).retrieve().body(SpotifyTopTracksResponse.class);
 
-		List<String> topTracksNames = new ArrayList<>();
+		return response.items().stream().map(SpotifyAlbum::name).toList();
 
-		for (SpotifyTrack track : response.tracks()) {
-			topTracksNames.add(track.name());
-		}
-
-		return topTracksNames;
 	}
 
 	private String getPlaylist(String artistName) {
 
 		SpotifyPlaylistSearchResponse response = restClientArtistSearch.get().uri(uriBuilder -> {
-			uriBuilder.path("/search?").queryParam("q", "This is " + artistName).queryParam("type", "playlist")
+			uriBuilder.path("/search").queryParam("q", "This is " + artistName).queryParam("type", "playlist")
 					.queryParam("market", "ES").queryParam("limit", 2);
 			return uriBuilder.build();
 		}).header("Authorization", "Bearer " + this.getToken()).retrieve().body(SpotifyPlaylistSearchResponse.class);
 
-		if (response == null || response.playlists == null) {
+		if (response == null || response.playlists == null || response.playlists().items().isEmpty()) {
 			throw new ResourceNotFoundException("No playlists found for that artist");
 		}
 
-		if (response.playlists().items().getFirst() == null) {
-			try {
-			return response.playlists().items().get(1).external_urls().spotify();
-			} catch(NullPointerException e) {
-				throw new ResourceNotFoundException("No playlists found for that artist");
+		for (SpotifyPlaylist playlist : response.playlists().items()) {
+			if (playlist != null && playlist.external_urls() != null) {
+				return playlist.external_urls().spotify();
 			}
 		}
 
-		return null;
-	}
-
-	public void mapToArtistResponseDTO() {
-
+		throw new ResourceNotFoundException("No playlists found for that artist");
 	}
 
 	private record SpotifyTokenResponse(String access_token, int expires_in) {
 	}
 
-	public record SpotifyArtistSearchResponse(SpotifyArtistItems artists) {
-	}
-
-	private record SpotifyArtistItems(List<SpotifyArtist> items) {
-	}
-
-	private record SpotifyArtist(String id, List<String> genres, SpotifyExternalUrls external_urls,
-			List<SpotifyImage> images) {
-	}
-
-	private record SpotifyImage(String url) {
-	}
-
 	private record SpotifyExternalUrls(String spotify) {
 	}
 
-	private record SpotifyTopTracksResponse(List<SpotifyTrack> tracks) {
+	private record SpotifyTopTracksResponse(List<SpotifyAlbum> items) {
 	}
 
-	private record SpotifyTrack(String name) {
+	private record SpotifyAlbum(String name) {
 	}
 
 	private record SpotifyPlaylistSearchResponse(SpotifyPlaylistItems playlists) {
