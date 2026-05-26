@@ -26,5 +26,12 @@ public class GlobalHandlerException {
 				HttpStatus.BAD_GATEWAY.value(), LocalDateTime.now());
 		return ResponseEntity.status(HttpStatus.BAD_GATEWAY.value()).body(response);
 	}
+	
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public ResponseEntity<ErrorDTO> handleNotFoundError(ResourceNotFoundException e) {
+		ErrorDTO response = new ErrorDTO(e.getMessage(), "Couldn't find the result",
+				HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(response);
+	}
 
 }
