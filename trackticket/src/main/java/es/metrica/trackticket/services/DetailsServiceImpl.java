@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-import es.metrica.trackticket.dto.ConcertDetailsResponseDTO;
 
 import es.metrica.trackticket.dto.VenueDTO;
 
@@ -26,7 +25,7 @@ public class DetailsServiceImpl implements DetailsService{
     }
     
     @Override
-	public ConcertDetailsResponseDTO detailsConcert(String idConcertTicketMaster) {
+	public ConcertResponseDTO detailsConcert(String idConcertTicketMaster) {
     	TicketMasterEvent event = restClient.get()
                 .uri(uriBuilder -> uriBuilder
                     .path("/events/{id}.json")
@@ -66,7 +65,7 @@ public class DetailsServiceImpl implements DetailsService{
 
 		String address = addressBuilder.toString();
 
-		return new ConcertDetailsResponseDTO(idConcert, nameConcert, concertDate, sellLink, artistName,artistLink,
+		return new ConcertResponseDTO(idConcert, nameConcert, concertDate, sellLink, artistName,artistLink,
 				new VenueDTO(venueName, latitude, longitude, address, stateName, countryName));
 	}
 
