@@ -54,6 +54,12 @@ public class User {
 		this.password = password;
 	}
 
+	public User(String userName, String email, String password ) {
+		setUserName(userName);
+		setEmail(email);
+		setPassword(password);
+	}
+	
 	protected User() {
 	}
 

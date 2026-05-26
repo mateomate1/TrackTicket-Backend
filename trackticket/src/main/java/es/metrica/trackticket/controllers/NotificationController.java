@@ -3,6 +3,7 @@ package es.metrica.trackticket.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/v1/notifications")
 @Tag(name = "Notifications", description = "Endpoints para gestión de notificaciones")
