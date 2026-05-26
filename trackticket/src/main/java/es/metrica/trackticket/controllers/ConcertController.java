@@ -1,6 +1,5 @@
 package es.metrica.trackticket.controllers;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -10,9 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import es.metrica.trackticket.dto.ConcertDetailsResponseDTO;
 import es.metrica.trackticket.dto.ConcertResponseDTO;
 import es.metrica.trackticket.dto.ConcertSearchRequestDTO;
-import es.metrica.trackticket.dto.VenueDTO;
+import es.metrica.trackticket.services.DetailsService;
 import es.metrica.trackticket.services.SearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,9 +23,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class ConcertController {
 	
 	private final SearchService searchService;
+	private final DetailsService detailsService;
 	
-	public ConcertController(SearchService searchService) {
+	public ConcertController(SearchService searchService,DetailsService detailsService) {
 		this.searchService = searchService;
+		this.detailsService = detailsService;
 	}
 
 	@PostMapping("/search")
@@ -36,8 +38,7 @@ public class ConcertController {
 
 	@PostMapping("/details")
 	@Operation(summary = "Ver detalles de un concierto")
-	public ResponseEntity<ConcertResponseDTO> getConcertDetails(@RequestParam String idConcertTicketmaster) {
-		return ResponseEntity.ok(new ConcertResponseDTO("idConcert", "name", LocalDate.now(), "link", "artistName",
-				new VenueDTO("name", 0.0, 0.0, "address", "state", "country")));
+	public ResponseEntity<ConcertDetailsResponseDTO> getConcertDetails(@RequestParam String idConcertTicketmaster) {
+		return ResponseEntity.ok(detailsService.detailsConcert(idConcertTicketmaster));
 	}
 }
