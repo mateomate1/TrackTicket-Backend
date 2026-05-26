@@ -1,11 +1,9 @@
 package es.metrica.trackticket.services;
 
-import java.util.List;
+import es.metrica.trackticket.dto.ConcertDetailsResponseDTO;
 
-import es.metrica.trackticket.dto.ConcertResponseDTO;
-import es.metrica.trackticket.dto.ConcertSearchRequestDTO;
 
 public interface DetailsService {
 	
-	List<ConcertResponseDTO> detailsConcert(ConcertSearchRequestDTO dto);
+	ConcertDetailsResponseDTO detailsConcert(String idConcertTicketMaster);
 }
