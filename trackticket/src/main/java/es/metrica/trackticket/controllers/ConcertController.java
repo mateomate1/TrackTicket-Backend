@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import es.metrica.trackticket.dto.ConcertDetailsResponseDTO;
+
 import es.metrica.trackticket.dto.ConcertResponseDTO;
 import es.metrica.trackticket.dto.ConcertSearchRequestDTO;
 import es.metrica.trackticket.services.DetailsService;
@@ -41,7 +41,7 @@ public class ConcertController {
 
 	@PostMapping("/details")
 	@Operation(summary = "Ver detalles de un concierto")
-	public ResponseEntity<ConcertDetailsResponseDTO> getConcertDetails(@RequestParam String idConcertTicketmaster) {
+	public ResponseEntity<ConcertResponseDTO> getConcertDetails(@RequestParam String idConcertTicketmaster) {
 		return ResponseEntity.ok(detailsService.detailsConcert(idConcertTicketmaster));
 	}
 }
