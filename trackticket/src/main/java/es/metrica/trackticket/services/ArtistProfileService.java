@@ -4,5 +4,5 @@ import es.metrica.trackticket.dto.ArtistResponseDTO;
 
 public interface ArtistProfileService {
 	
-	ArtistResponseDTO getArtist (String artistName);
+	ArtistResponseDTO getArtist (String artistName, String artistGenre);
 }

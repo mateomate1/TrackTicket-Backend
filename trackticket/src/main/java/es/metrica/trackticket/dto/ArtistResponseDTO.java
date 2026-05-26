@@ -8,5 +8,6 @@ public record ArtistResponseDTO (
 		String name,
 		String linkList,
 		String linkImage,
+		String genre,
 		List<String> albums
 		) {}

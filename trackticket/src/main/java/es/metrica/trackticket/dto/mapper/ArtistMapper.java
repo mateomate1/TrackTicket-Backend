@@ -6,11 +6,11 @@ import es.metrica.trackticket.dto.ArtistResponseDTO;
 
 public class ArtistMapper {
 
-	public static ArtistResponseDTO mapToArtistResponseDTO(String name, SpotifyArtistSearchResponse response,
+	public static ArtistResponseDTO mapToArtistResponseDTO(String name, String genre, SpotifyArtistSearchResponse response,
 			List<String> albums, String playlistUrl) {
 
 		return new ArtistResponseDTO(response.artists().items().getFirst().id(), name, playlistUrl,
-				response.artists().items().getFirst().images().getFirst().url(), albums);
+				response.artists().items().getFirst().images().getFirst().url(), genre, albums);
 	}
 
 	public record SpotifyArtistSearchResponse(SpotifyArtistItems artists) {

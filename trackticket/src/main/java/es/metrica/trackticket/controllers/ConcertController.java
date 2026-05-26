@@ -39,7 +39,7 @@ public class ConcertController {
 	@PostMapping("/details")
 	@Operation(summary = "Ver detalles de un concierto")
 	public ResponseEntity<ConcertResponseDTO> getConcertDetails(@RequestParam String idConcertTicketmaster) {
-		return ResponseEntity.ok(new ConcertResponseDTO("idConcert", "name", LocalDate.now(), "link", "artistName",
+		return ResponseEntity.ok(new ConcertResponseDTO("idConcert", "name", LocalDate.now(), "link", "artistName", "artistGenre",
 				new VenueDTO("name", 0.0, 0.0, "address", "state", "country")));
 	}
 }

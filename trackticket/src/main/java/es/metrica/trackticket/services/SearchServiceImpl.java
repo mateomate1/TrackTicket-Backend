@@ -57,7 +57,9 @@ public class SearchServiceImpl implements SearchService {
 
 		if (response != null && response._embedded() != null) {
 			try {
-				return response._embedded().events().stream().map(ConcertSearchMapper::mapToConcertResponseDTO).toList();
+				return response._embedded().events().stream()
+						.filter(event -> event.classifications().getFirst().segment().name().equals("Música"))
+						.map(ConcertSearchMapper::mapToConcertResponseDTO).toList();
 			} catch (NullPointerException e) {
 				throw new ResourceNotFoundException("Búsqueda sin resultados");
 			}
@@ -77,11 +79,5 @@ public class SearchServiceImpl implements SearchService {
 
 		return true;
 	}
-
-	
-
-	
-
-	
 
 }
