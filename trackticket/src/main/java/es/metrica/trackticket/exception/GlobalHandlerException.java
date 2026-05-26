@@ -24,7 +24,7 @@ public class GlobalHandlerException {
 	public ResponseEntity<ErrorDTO> handleExternalServerError(HttpServerErrorException e) {
 		ErrorDTO response = new ErrorDTO(e.getMessage(), "The external server is not available at the moment.",
 				HttpStatus.BAD_GATEWAY.value(), LocalDateTime.now());
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(response);
+		return ResponseEntity.status(HttpStatus.BAD_GATEWAY.value()).body(response);
 	}
 	
 	@ExceptionHandler(ResourceNotFoundException.class)
