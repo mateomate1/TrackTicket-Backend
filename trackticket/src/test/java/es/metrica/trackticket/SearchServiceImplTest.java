@@ -20,6 +20,7 @@ import org.springframework.web.client.RestClient;
 import es.metrica.trackticket.dto.ConcertResponseDTO;
 import es.metrica.trackticket.dto.ConcertSearchRequestDTO;
 import es.metrica.trackticket.dto.VenueDTO;
+import es.metrica.trackticket.exception.ResourceNotFoundException;
 import es.metrica.trackticket.services.SearchServiceImpl;
 
 class SearchServiceImplTest {
@@ -12477,9 +12478,8 @@ class SearchServiceImplTest {
 				"https://app.ticketmaster.com/discovery/v2/events.json?apikey=uDn8Th1Hg0DWXaInqHaQ2gQ7s1VJ0Ru9&locale=es&startDateTime=2026-05-22T00:00:00Z&includeTBA=no&includeTBD=no&size=20&sort=date,asc&keyword=El%20%C3%9Altimo%20de%20la%20Fila"))
 				.andRespond(MockRestResponseCreators.withSuccess(result, MediaType.APPLICATION_JSON));
 
-		List<ConcertResponseDTO> list = searchService.searchConcerts(dto);
-
-		assertTrue(list.isEmpty());
+		Exception e = assertThrows(ResourceNotFoundException.class, () -> searchService.searchConcerts(dto));
+		assertEquals("Búsqueda sin resultados", e.getMessage());
 		mockServer.verify();
 	}
 
@@ -13156,9 +13156,8 @@ class SearchServiceImplTest {
 				"https://app.ticketmaster.com/discovery/v2/events.json?apikey=uDn8Th1Hg0DWXaInqHaQ2gQ7s1VJ0Ru9&locale=es&startDateTime=2026-05-22T00:00:00Z&includeTBA=no&includeTBD=no&size=20&sort=date,asc&city=Barkaldo&keyword=El%20%C3%9Altimo%20de%20la%20Fila"))
 				.andRespond(MockRestResponseCreators.withSuccess(result, MediaType.APPLICATION_JSON));
 
-		List<ConcertResponseDTO> list = searchService.searchConcerts(dto);
-
-		assertTrue(list.isEmpty());
+		Exception e = assertThrows(ResourceNotFoundException.class, () -> searchService.searchConcerts(dto));
+		assertEquals("Búsqueda sin resultados", e.getMessage());
 		mockServer.verify();
 	}
 

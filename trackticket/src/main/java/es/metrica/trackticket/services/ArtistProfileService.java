@@ -1,5 +1,8 @@
 package es.metrica.trackticket.services;
 
-public interface ArtistProfileService {
+import es.metrica.trackticket.dto.ArtistResponseDTO;
 
+public interface ArtistProfileService {
+	
+	ArtistResponseDTO getArtist (String artistName);
 }

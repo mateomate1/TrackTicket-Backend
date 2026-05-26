@@ -1,11 +1,13 @@
 package es.metrica.trackticket.dto;
 
+import java.util.List;
+
 public record ArtistResponseDTO (
 		
 		String idArtist, 
 		String name,
 		String linkList,
 		String linkImage,
-		String genre
-		
+		String genre,
+		List<String> top10Tracks
 		) {}

@@ -1,5 +1,7 @@
 package es.metrica.trackticket.controllers;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,10 +18,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/v1/artists")
 @Tag(name = "Artists", description = "Endpoints para artistas")
 public class ArtistController {
-	
+
 	@PostMapping("/profile")
 	@Operation(summary = "Ver perfil de un artista")
 	public ResponseEntity<ArtistResponseDTO> getArtistProfile(@RequestParam String artistName) {
-		return ResponseEntity.ok(new ArtistResponseDTO("idArtist", "nameArtist", "linkSpotifyList", "linkImage", "genre"));
+		return ResponseEntity.ok(
+				new ArtistResponseDTO("idArtist", "nameArtist", "linkSpotifyList", "linkImage", "genre", List.of()));
 	}
 }
