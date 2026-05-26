@@ -10,6 +10,7 @@ public record ConcertResponseDTO (
 		String link,
 		String artistName,
 		String artistGenre,
+		String artistLink,
 		VenueDTO venue
 		
 		) {}

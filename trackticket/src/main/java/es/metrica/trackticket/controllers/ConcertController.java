@@ -23,9 +23,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/v1/concerts")
 @Tag(name = "Concerts", description = "Endpoints para búsqueda de conciertos")
 public class ConcertController {
-	
+
 	private final SearchService searchService;
-	
+
 	public ConcertController(SearchService searchService) {
 		this.searchService = searchService;
 	}
@@ -39,7 +39,7 @@ public class ConcertController {
 	@PostMapping("/details")
 	@Operation(summary = "Ver detalles de un concierto")
 	public ResponseEntity<ConcertResponseDTO> getConcertDetails(@RequestParam String idConcertTicketmaster) {
-		return ResponseEntity.ok(new ConcertResponseDTO("idConcert", "name", LocalDate.now(), "link", "artistName", "artistGenre",
-				new VenueDTO("name", 0.0, 0.0, "address", "state", "country")));
+		return ResponseEntity.ok(new ConcertResponseDTO("idConcert", "name", LocalDate.now(), "link", "artistName",
+				"artistGenre", "artistLink", new VenueDTO("name", 0.0, 0.0, "address", "state", "country")));
 	}
 }
