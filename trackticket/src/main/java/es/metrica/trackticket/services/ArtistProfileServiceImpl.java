@@ -55,7 +55,7 @@ public class ArtistProfileServiceImpl implements ArtistProfileService {
 	}
 
 	@Override
-	public ArtistResponseDTO getArtist(String artistName) {
+	public ArtistResponseDTO getArtist(String artistName, String artistGenre) {
 
 		if (artistName == null || artistName.isBlank()) {
 			throw new IllegalArgumentException("El nombre del artista no puede estar vacío.");
@@ -74,19 +74,22 @@ public class ArtistProfileServiceImpl implements ArtistProfileService {
 		List<String> albums = this.getAlbums(response.artists().items().getFirst().id());
 		String playlistUrl = this.getPlaylist(artistName);
 
-		return ArtistMapper.mapToArtistResponseDTO(artistName, response, albums, playlistUrl);
+		return ArtistMapper.mapToArtistResponseDTO(artistName, artistGenre, response, albums, playlistUrl);
 	}
 
 	private List<String> getAlbums(String artistId) {
 
-		SpotifyTopTracksResponse response = restClientArtistSearch.get().uri(uriBuilder -> {
-			uriBuilder.path("/artists/{id}/albums").queryParam("market", "ES").queryParam("include_groups", "albums")
+		SpotifyAlbumsResponse response = restClientArtistSearch.get().uri(uriBuilder -> {
+			uriBuilder.path("/artists/{id}/albums").queryParam("market", "ES").queryParam("include_groups", "album")
 					.queryParam("limit", 10);
 			return uriBuilder.build(artistId);
-		}).header("Authorization", "Bearer " + this.getToken()).retrieve().body(SpotifyTopTracksResponse.class);
+		}).header("Authorization", "Bearer " + this.getToken()).retrieve().body(SpotifyAlbumsResponse.class);
+		
+		if(response == null || response.items().isEmpty()) {
+			throw new ResourceNotFoundException("No albums found for that artist");
+		}
 
 		return response.items().stream().map(SpotifyAlbum::name).toList();
-
 	}
 
 	private String getPlaylist(String artistName) {
@@ -116,7 +119,7 @@ public class ArtistProfileServiceImpl implements ArtistProfileService {
 	private record SpotifyExternalUrls(String spotify) {
 	}
 
-	private record SpotifyTopTracksResponse(List<SpotifyAlbum> items) {
+	private record SpotifyAlbumsResponse(List<SpotifyAlbum> items) {
 	}
 
 	private record SpotifyAlbum(String name) {

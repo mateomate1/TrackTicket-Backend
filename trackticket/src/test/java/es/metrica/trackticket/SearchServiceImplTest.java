@@ -744,6 +744,7 @@ class SearchServiceImplTest {
 		ConcertResponseDTO firstResult = new ConcertResponseDTO("Z698xZ2qZ16v0vGxJo", "El Último de la Fila",
 				LocalDate.of(2026, 05, 23),
 				"https://www.ticketmaster.es/event/el-ultimo-de-la-fila-entradas/1901322991", "El Último de la Fila",
+				"Rock", "https://www.ticketmaster.es/artist/el-ultimo-de-la-fila-entradas/1418653",
 				new VenueDTO("Estadio Riyadh Air Metropolitano", 40.43624, -3.59947,
 						"Av. de Luis Aragonés, 4, Línea 2 de prueba, 28022, Madrid", "Madrid", "España"));
 
@@ -1113,7 +1114,9 @@ class SearchServiceImplTest {
 		List<ConcertResponseDTO> list = searchService.searchConcerts(dto);
 		ConcertResponseDTO firstResult = new ConcertResponseDTO("Z698xZ2qZ16vv4C3jp", "Kream by Alvama Ice",
 				LocalDate.of(2026, 06, 05), "https://www.ticketmaster.es/event/kream-by-alvama-ice-entradas/1055392716",
-				"Alvama Ice", new VenueDTO("Estadi Ciutat de València", 39.49489, -0.3647,
+				"Alvama Ice", "Otros",
+				"https://www.ticketmaster.es/artist/kream-ice-land-by-alvama-ice-entradas/1306223",
+				new VenueDTO("Estadi Ciutat de València", 39.49489, -0.3647,
 						"Carrer de Sant Vicent de Paül, 44, 46019, Valencia", "Valencia", "España"));
 
 		assertEquals(1, list.size());
@@ -1496,8 +1499,8 @@ class SearchServiceImplTest {
 		List<ConcertResponseDTO> list = searchService.searchConcerts(dto);
 		ConcertResponseDTO firstResult = new ConcertResponseDTO("Z698xZ2qZ16vCbpdGz", "Delarue",
 				LocalDate.of(2026, 06, 05), "https://www.ticketmaster.es/event/delarue-entradas/1398583338", "Delarue",
-				new VenueDTO("Sala Razzmatazz 2", 41.39701, 2.19147, "Carrer de Pamplona, 88, 08018, Barcelona",
-						"Barcelona", "España"));
+				"Hip-Hop/Rap", "https://www.ticketmaster.es/artist/delarue-entradas/1400664", new VenueDTO("Sala Razzmatazz 2", 41.39701, 2.19147,
+						"Carrer de Pamplona, 88, 08018, Barcelona", "Barcelona", "España"));
 
 		assertEquals(1, list.size());
 		assertEquals(list.getFirst(), firstResult);
@@ -9296,10 +9299,10 @@ class SearchServiceImplTest {
 		ConcertResponseDTO firstResult = new ConcertResponseDTO("Z698xZ2qZ16vGPFe4K", "Madison Beer: the locket tour",
 				LocalDate.of(2026, 05, 26),
 				"https://www.ticketmaster.es/event/madison-beer-the-locket-tour-entradas/1325202553", "Madison Beer",
-				new VenueDTO("Sant Jordi Club", 41.36323, 2.15257, "Passeig Olímpic, 5-7, 08038, Barcelona",
+				"Rock", "https://www.ticketmaster.es/artist/madison-beer-entradas/991303", new VenueDTO("Sant Jordi Club", 41.36323, 2.15257, "Passeig Olímpic, 5-7, 08038, Barcelona",
 						"Barcelona", "España"));
 
-		assertEquals(20, list.size());
+		assertEquals(19, list.size());
 		assertEquals(list.getFirst(), firstResult);
 		mockServer.verify();
 	}
@@ -11712,7 +11715,7 @@ class SearchServiceImplTest {
 		List<ConcertResponseDTO> list = searchService.searchConcerts(dto);
 		ConcertResponseDTO firstResult = new ConcertResponseDTO("Z698xZ2qZ1kJvuvbv", "El Último de la Fila",
 				LocalDate.of(2026, 05, 30), "https://www.ticketmaster.es/event/el-ultimo-de-la-fila-entradas/981341601",
-				"El Último de la Fila", new VenueDTO("Bizkaia Arena - BEC!", 43.29087, -2.98869,
+				"El Último de la Fila", "Rock", "https://www.ticketmaster.es/artist/el-ultimo-de-la-fila-entradas/1418653", new VenueDTO("Bizkaia Arena - BEC!", 43.29087, -2.98869,
 						"Rda. de Azkue, 1, null, Barakaldo", "Bizkaia", "España"));
 
 		assertEquals(7, list.size());
@@ -12443,7 +12446,7 @@ class SearchServiceImplTest {
 		List<ConcertResponseDTO> list = searchService.searchConcerts(dto);
 		ConcertResponseDTO firstResult = new ConcertResponseDTO("Z698xZ2qZ1kJvuvbv", "El Último de la Fila",
 				LocalDate.of(2026, 05, 30), "https://www.ticketmaster.es/event/el-ultimo-de-la-fila-entradas/981341601",
-				"El Último de la Fila", new VenueDTO("Bizkaia Arena - BEC!", 43.29087, -2.98869,
+				"El Último de la Fila", "Rock", "https://www.ticketmaster.es/artist/el-ultimo-de-la-fila-entradas/1418653", new VenueDTO("Bizkaia Arena - BEC!", 43.29087, -2.98869,
 						"Rda. de Azkue, 1, null, Barakaldo", "Bizkaia", "España"));
 
 		assertEquals(2, list.size());
