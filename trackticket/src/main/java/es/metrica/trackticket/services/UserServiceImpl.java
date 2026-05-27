@@ -32,20 +32,24 @@ public class UserServiceImpl implements UserService {
 		String email = encryptionService.decrypt(dto.email());
 		String password = encryptionService.decrypt(dto.password());
 		
-		if(userRepository.existsByUserName(name) ) {
-			throw new IllegalArgumentException("El nombre de usuario ya está registrado");
-		}
+		boolean existsName = userRepository.findAll()
+								.stream()
+								.anyMatch(n -> passwordEncoder.matches(name, n.getUserName()));
 		
-		if(userRepository.existsByEmail(email) ) {
-			throw new IllegalArgumentException("El email del usuario ya está registrado");
+		boolean existsEmail = userRepository.findAll()
+								.stream()
+								.anyMatch(n -> passwordEncoder.matches(email, n.getEmail()));
+										
+		if(existsName) throw new IllegalArgumentException("El nombre de usuario ya está registrado");
+		if(existsEmail) throw new IllegalArgumentException("El email del usuario ya está registrado");
 		
-		}
 		
 		userRepository.save(
-				new User( name, 
-						  email, 
-						  passwordEncoder.encode(password)
-						)
+				new User(
+					    passwordEncoder.encode(name),
+					    passwordEncoder.encode(email),
+					    passwordEncoder.encode(password)
+					)
 				);
 	}
 	
@@ -55,22 +59,28 @@ public class UserServiceImpl implements UserService {
 		String user = encryptionService.decrypt(dto.user());
 		String password = encryptionService.decrypt(dto.password());
 		
-		Optional<User> searchedUser = userRepository.findByUserNameOrEmail(user, user);
+		User searchedUser = userRepository.findAll()
+				.stream()
+			    .filter(n -> passwordEncoder.matches(user, n.getUserName()) || 
+		                 	 passwordEncoder.matches(user, n.getEmail()))
+			    .findFirst()
+			    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 		
-		if(searchedUser.isEmpty()) throw new IllegalArgumentException();
-		else {
+		if(passwordEncoder.matches(password, searchedUser.getPassword())) {
 			
-			if(passwordEncoder.matches(password, searchedUser.get().getPassword())) {
+			if(searchedUser.getUserSession() == null) {
+				
 				var token = UUID.randomUUID().toString();
 				
-				searchedUser.get().setUserSession(token);
-				userRepository.save(searchedUser.get());
+				searchedUser.setUserSession(token);
+				userRepository.save(searchedUser);
 				
 				return token;
 				
-			} else throw new IllegalArgumentException();
+			} else return searchedUser.getUserSession();
+				
+		} else throw new IllegalArgumentException();
 			
-		}
 	}
 	
 	public void logOut(TokenRequestDTO dto) {
