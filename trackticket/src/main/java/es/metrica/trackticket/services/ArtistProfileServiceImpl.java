@@ -84,6 +84,10 @@ public class ArtistProfileServiceImpl implements ArtistProfileService {
 					.queryParam("limit", 10);
 			return uriBuilder.build(artistId);
 		}).header("Authorization", "Bearer " + this.getToken()).retrieve().body(SpotifyAlbumsResponse.class);
+		
+		if(response == null || response.items().isEmpty()) {
+			throw new ResourceNotFoundException("No albums found for that artist");
+		}
 
 		return response.items().stream().map(SpotifyAlbum::name).toList();
 	}
