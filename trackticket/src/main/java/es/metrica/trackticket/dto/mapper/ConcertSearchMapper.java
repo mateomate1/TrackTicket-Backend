@@ -56,7 +56,7 @@ public final class ConcertSearchMapper {
 
 	private record TicketMasterGenre(String name) {
 	}
-
+	
 	private record TicketMasterDates(TicketMasterStart start) {
 	}
 
