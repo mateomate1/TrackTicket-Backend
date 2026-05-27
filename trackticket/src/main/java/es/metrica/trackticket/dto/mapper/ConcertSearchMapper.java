@@ -20,6 +20,8 @@ public final class ConcertSearchMapper {
 		String countryName = event._embedded().venues().getFirst().country().name();
 		String sellLink = event.url();
 		String artistName = event._embedded().attractions().get(0).name();
+		String artistGenre = event.classifications().getFirst().genre().name();
+		String artistLink = event._embedded().attractions().getFirst().url();
 
 		StringBuilder addressBuilder = new StringBuilder(event._embedded().venues().getFirst().address().line1());
 
@@ -32,7 +34,7 @@ public final class ConcertSearchMapper {
 
 		String address = addressBuilder.toString();
 
-		return new ConcertResponseDTO(idConcert, nameConcert, concertDate, sellLink, artistName,
+		return new ConcertResponseDTO(idConcert, nameConcert, concertDate, sellLink, artistName,artistGenre,artistLink,
 				new VenueDTO(venueName, latitude, longitude, address, stateName, countryName));
 	}
 	
@@ -43,9 +45,18 @@ public final class ConcertSearchMapper {
 	}
 	
 	public record TicketMasterEvent(String id, String name, String url, TicketMasterDates dates,
-			TicketMasterEmbeddedVenues _embedded) {
+			List<TicketMasterClassifications> classifications,TicketMasterEmbeddedVenues _embedded) {
+	}
+	
+	public record TicketMasterClassifications(TicketMasterSegment segment, TicketMasterGenre genre) {
 	}
 
+	public record TicketMasterSegment(String name) {
+	}
+
+	private record TicketMasterGenre(String name) {
+	}
+	
 	private record TicketMasterDates(TicketMasterStart start) {
 	}
 
@@ -56,7 +67,7 @@ public final class ConcertSearchMapper {
 			List<TickerMasterAttractions> attractions) {
 	}
 
-	private record TickerMasterAttractions(String name) {
+	private record TickerMasterAttractions(String name, String url) {
 	}
 
 	private record TicketMasterVenue(String name, String postalCode, TicketMasterLocation location,
