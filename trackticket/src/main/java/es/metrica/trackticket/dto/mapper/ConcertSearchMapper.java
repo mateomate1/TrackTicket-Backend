@@ -34,20 +34,20 @@ public final class ConcertSearchMapper {
 
 		String address = addressBuilder.toString();
 
-		return new ConcertResponseDTO(idConcert, nameConcert, concertDate, sellLink, artistName,artistGenre,artistLink,
+		return new ConcertResponseDTO(idConcert, nameConcert, concertDate, sellLink, artistName, artistGenre, artistLink,
 				new VenueDTO(venueName, latitude, longitude, address, stateName, countryName));
 	}
-	
+
 	public record TicketMasterResponse(TicketMasterEmbedded _embedded) {
 	}
 
 	public record TicketMasterEmbedded(List<TicketMasterEvent> events) {
 	}
-	
+
 	public record TicketMasterEvent(String id, String name, String url, TicketMasterDates dates,
-			List<TicketMasterClassifications> classifications,TicketMasterEmbeddedVenues _embedded) {
+			List<TicketMasterClassifications> classifications, TicketMasterEmbeddedVenues _embedded) {
 	}
-	
+
 	public record TicketMasterClassifications(TicketMasterSegment segment, TicketMasterGenre genre) {
 	}
 

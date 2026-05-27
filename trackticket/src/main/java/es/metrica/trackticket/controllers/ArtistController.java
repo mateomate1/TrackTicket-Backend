@@ -26,7 +26,7 @@ public class ArtistController {
 
 	@PostMapping("/profile")
 	@Operation(summary = "Ver perfil de un artista")
-	public ResponseEntity<ArtistResponseDTO> getArtistProfile(@RequestParam String artistName) {
-		return ResponseEntity.ok(artistProfileService.getArtist(artistName));
+	public ResponseEntity<ArtistResponseDTO> getArtistProfile(@RequestParam String artistName, @RequestParam String artistGenre) {
+		return ResponseEntity.ok(artistProfileService.getArtist(artistName, artistGenre));
 	}
 }

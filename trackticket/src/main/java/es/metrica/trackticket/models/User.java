@@ -3,6 +3,7 @@ package es.metrica.trackticket.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,14 +34,14 @@ public class User {
 	@Column(name = "user_session", unique = true)
 	private String userSession;
 
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.REMOVE)
 	@JoinTable(
 			name = "users_favourite_artists",
 			joinColumns = @JoinColumn(name = "id_user"),
 			inverseJoinColumns = @JoinColumn(name = "id_artist"))
 	private List<Artist> favouriteArtists = new ArrayList<>();
 	
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.REMOVE)
 	@JoinTable(
 			name = "users_favourite_concerts",
 			joinColumns = @JoinColumn(name = "id_user"),
@@ -93,5 +94,13 @@ public class User {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public String getUserSession() {
+		return userSession;
+	}
+	
+	public void setUserSession(String token) {
+		this.userSession = token;
 	}
 }

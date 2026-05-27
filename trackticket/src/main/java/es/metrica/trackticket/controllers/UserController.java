@@ -27,6 +27,7 @@ public class UserController {
 	public UserController(UserService userService) {
 		this.userService = userService;
 	}
+	
 	@PostMapping("/register")
 	@Operation(summary = "Registrar usuario")
 	@ApiResponse(responseCode = "201", description = "Usuario registrado correctamente")
@@ -39,7 +40,9 @@ public class UserController {
 	@PostMapping("/delete")
 	@Operation(summary = "Eliminar cuanta de usuario")
 	@ApiResponse(responseCode = "204", description = "Cuanta eliminada correctamente")
-	public ResponseEntity<Void> deleteAccount(@RequestBody TokenRequestDTO dto) {
+	public ResponseEntity<Void> deleteAccount(@Valid @RequestBody TokenRequestDTO dto) {
+		userService.deleteAccount(dto);
+		
 		return ResponseEntity.noContent().build();
 	}
 }
