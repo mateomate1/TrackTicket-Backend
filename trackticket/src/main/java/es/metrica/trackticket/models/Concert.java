@@ -22,7 +22,7 @@ public class Concert {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_concert")
-	private String idConcert;
+	private Long idConcert;
 
 	@Column(name = "external_id_concert", unique = true, nullable = false)
 	private String externalIdConcert;
@@ -61,11 +61,11 @@ public class Concert {
 	public String getexternalIdConcert() {
 		return externalIdConcert;
 	}
-	public String getIdConcert() {
+	public Long getIdConcert() {
 		return idConcert;
 	}
 
-	public void setIdConcert(String idConcert) {
+	public void setIdConcert(Long idConcert) {
 		this.idConcert = idConcert;
 	}
 
@@ -91,6 +91,14 @@ public class Concert {
 
 	public void setVenue(Venue venue) {
 		this.venue = venue;
+		
+	}
+	public List<Artist> getArtists() {
+		return artists;
+	}
+
+	public void setArtists(List<Artist> artists) {
+		this.artists = artists;
 	}
 
 }
