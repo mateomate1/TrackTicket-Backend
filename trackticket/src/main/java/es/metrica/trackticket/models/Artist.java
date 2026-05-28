@@ -40,13 +40,11 @@ public class Artist {
 	@ManyToMany(mappedBy = "artists")
 	private List<Concert> concerts;
 	
-	public Artist() {}
+	protected Artist() {}
 	
-	public Artist(Long idArtist, String artistName, String musicGenre, String spotifyLink) {
-		this.idArtist = idArtist;
+	public Artist(String externalIdArtist, String artistName) {
+		this.externalIdArtist = externalIdArtist;
 		this.artistName = artistName;
-		this.musicGenre = musicGenre;
-		this.spotifyLink = spotifyLink;
 		this.users = new ArrayList<>();
 		this.concerts = new ArrayList<>();
 	}

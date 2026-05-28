@@ -7,31 +7,39 @@ import es.metrica.trackticket.models.Artist;
 
 public class ArtistMapper {
 
-	public static ArtistResponseDTO mapToArtistResponseDTO(String name, String genre, SpotifyArtistSearchResponse response,
-			List<String> albums, String playlistUrl) {
+	public static ArtistResponseDTO mapToArtistResponseDTO(String name, String genre,
+			SpotifyArtistSearchResponse response, List<String> albums, String playlistUrl) {
 
 		return new ArtistResponseDTO(response.artists().items().getFirst().id(), name, playlistUrl,
 				response.artists().items().getFirst().images().getFirst().url(), genre, albums);
 	}
-	
-	public static Artist mapToArtist(SpotifyGetArtistResponse response, String externalIdArtist, String musicGenre) {
-		
-		Artist artist = new Artist();
-		
-		artist.setArtistName(response.name());
-		artist.setExternalIdArtist(externalIdArtist);
+
+	public static Artist mapToArtistWithId(SpotifyGetArtistResponse response, String externalIdArtist,
+			String musicGenre) {
+
+		Artist artist = new Artist(externalIdArtist, response.name());
+
 		artist.setMusicGenre(musicGenre);
 		artist.setSpotifyLink(response.external_urls().spotify());
 		artist.setArtistImageUrl(response.images().getFirst().url());
-		
-		return null;
+
+		return artist;
 	}
-	
-	
+
+	public static Artist mapToArtistWithName(String name, String genre, SpotifyArtistSearchResponse response) {
+
+		Artist artist = new Artist(response.artists().items().getFirst().id(), name);
+
+		artist.setMusicGenre(genre);
+		artist.setSpotifyLink(response.artists().items().getFirst().external_urls().spotify());
+		artist.setArtistImageUrl(response.artists().items().getFirst().images().getFirst().url());
+
+		return artist;
+	}
 
 	public record SpotifyGetArtistResponse(String name, List<SpotifyImage> images, SpotifyExternalUrls external_urls) {
 	}
-		
+
 	public record SpotifyArtistSearchResponse(SpotifyArtistItems artists) {
 	}
 
