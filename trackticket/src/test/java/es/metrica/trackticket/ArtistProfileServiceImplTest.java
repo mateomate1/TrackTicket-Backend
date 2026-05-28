@@ -372,6 +372,7 @@ class ArtistProfileServiceImplTest {
 		ArtistResponseDTO result = artistProfileService.getArtist(artist, genre);
 
 		ArtistResponseDTO resultShouldBe = new ArtistResponseDTO("0jeYkqwckGJoHQhhXwgzk3", "Cruz Cafuné",
+				"https://open.spotify.com/artist/0jeYkqwckGJoHQhhXwgzk3",
 				"https://open.spotify.com/playlist/2RY8A6sFNkxCDIVtGW1ImG",
 				"https://i.scdn.co/image/ab6761610000e5eb9f52199eefb0ccb6f69afe2c", "Rap/HipHop",
 				List.of("blu€s (d€lux€)", "Me Muevo Con Dios", "Moonlight922", "Maracucho Bueno Muere Chiquito"));

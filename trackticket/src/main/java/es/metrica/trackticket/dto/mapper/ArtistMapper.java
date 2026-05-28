@@ -7,10 +7,11 @@ import es.metrica.trackticket.models.Artist;
 
 public class ArtistMapper {
 
-	public static ArtistResponseDTO mapToArtistResponseDTO(String name, String genre,
+	public static ArtistResponseDTO fromSpotifyToArtistResponseDTO(String name, String genre,
 			SpotifyArtistSearchResponse response, List<String> albums, String playlistUrl) {
 
-		return new ArtistResponseDTO(response.artists().items().getFirst().id(), name, playlistUrl,
+		return new ArtistResponseDTO(response.artists().items().getFirst().id(), name,
+				response.artists().items().getFirst().external_urls().spotify(), playlistUrl,
 				response.artists().items().getFirst().images().getFirst().url(), genre, albums);
 	}
 
@@ -35,6 +36,12 @@ public class ArtistMapper {
 		artist.setArtistImageUrl(response.artists().items().getFirst().images().getFirst().url());
 
 		return artist;
+	}
+
+	public static ArtistResponseDTO mapFromArtistToArtistResponseDTO(Artist artist) {
+
+		return new ArtistResponseDTO(artist.getExternalIdArtist(), artist.getArtistName(), artist.getSpotifyLink(),
+				artist.getPlaylistLink(), artist.getArtistImageUrl(), artist.getMusicGenre(), artist.getAlbums());
 	}
 
 	public record SpotifyGetArtistResponse(String name, List<SpotifyImage> images, SpotifyExternalUrls external_urls) {

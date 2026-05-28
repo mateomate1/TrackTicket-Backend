@@ -102,4 +102,20 @@ public class User {
 	public void setUserSession(String token) {
 		this.userSession = token;
 	}
+
+	public List<Artist> getFavouriteArtists() {
+		return favouriteArtists;
+	}
+
+	public void setFavouriteArtists(List<Artist> favouriteArtists) {
+		this.favouriteArtists = favouriteArtists;
+	}
+
+	public List<Concert> getFavouriteConcerts() {
+		return favouriteConcerts;
+	}
+
+	public void setFavouriteConcerts(List<Concert> favouriteConcerts) {
+		this.favouriteConcerts = favouriteConcerts;
+	}
 }
