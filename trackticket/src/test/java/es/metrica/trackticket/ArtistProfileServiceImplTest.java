@@ -17,11 +17,13 @@ import org.springframework.web.client.RestClient;
 import es.metrica.trackticket.dto.ArtistResponseDTO;
 import es.metrica.trackticket.exception.ResourceNotFoundException;
 import es.metrica.trackticket.services.ArtistProfileServiceImpl;
+import es.metrica.trackticket.services.SpotifyTokenServiceImpl;
 
 class ArtistProfileServiceImplTest {
 
 	private ArtistProfileServiceImpl artistProfileService;
 	private MockRestServiceServer mockServer;
+	private SpotifyTokenServiceImpl spotifyTokenServiceImpl;
 
 	@BeforeEach
 	void setUp() {
@@ -30,9 +32,10 @@ class ArtistProfileServiceImplTest {
 
 		mockServer = MockRestServiceServer.bindTo(builder).build();
 
-		artistProfileService = new ArtistProfileServiceImpl(builder, "https://api.spotify.com/v1",
-				"https://accounts.spotify.com/api/token", "41002883abee4b4f8721d9b0fc13cbe5",
+		spotifyTokenServiceImpl = new SpotifyTokenServiceImpl(builder, "https://accounts.spotify.com/api/token", "41002883abee4b4f8721d9b0fc13cbe5",
 				"935a926a691e4413a9f81b06d46d3b2e");
+		
+		artistProfileService = new ArtistProfileServiceImpl(builder, "https://api.spotify.com/v1", spotifyTokenServiceImpl);
 	}
 
 	@Test

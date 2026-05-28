@@ -23,7 +23,7 @@ public class Concert {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_concert")
 	private Long idConcert;
-	
+
 	@Column(name = "external_id_concert", unique = true, nullable = false)
 	private String externalIdConcert;
 
