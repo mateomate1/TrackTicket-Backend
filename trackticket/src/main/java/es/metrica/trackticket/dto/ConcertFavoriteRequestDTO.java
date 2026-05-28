@@ -9,7 +9,7 @@ public record ConcertFavoriteRequestDTO(
 		String token,
 		
 		@NotNull(message = "Identificador de concierto obligatorio")
-		Integer idConcierto
+		String idConcierto
 		
 		) {
 
