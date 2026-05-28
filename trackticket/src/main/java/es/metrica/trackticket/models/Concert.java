@@ -47,9 +47,9 @@ public class Concert {
 	protected Concert() {
 	}
 
-	public Concert(String idConcert, LocalDateTime concertDate, String sellLink, Venue venue) {
+	public Concert(String externalIdConcert, LocalDateTime concertDate, String sellLink, Venue venue) {
 		super();
-		this.idConcert = idConcert;
+		this.externalIdConcert = externalIdConcert;
 		this.concertDate = concertDate;
 		this.sellLink = sellLink;
 		this.venue = venue;
@@ -57,6 +57,10 @@ public class Concert {
 		this.users = new ArrayList<>();
 	}
 
+	
+	public String getexternalIdConcert() {
+		return externalIdConcert;
+	}
 	public String getIdConcert() {
 		return idConcert;
 	}

@@ -60,6 +60,8 @@ public class User {
 		setPassword(password);
 	}
 	
+	public List<Concert> getFavouriteConcerts() { return favouriteConcerts; }
+	
 	protected User() {
 	}
 
