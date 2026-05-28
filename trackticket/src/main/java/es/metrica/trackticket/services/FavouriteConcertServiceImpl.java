@@ -26,6 +26,7 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
     private EncryptionService encryptionService;
     private FindAndSaveArtistServiceImpl findAndSaveArtistService;
     private RestClient restClient;
+    private String apiKey;
 
     
 	public FavouriteConcertServiceImpl(
@@ -45,20 +46,22 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
         this.encryptionService        = encryptionService;
         this.findAndSaveArtistService = findAndSaveArtistService;
         this.restClient               = restClientBuilder.baseUrl(url).build();
+        this.apiKey                   = apiKey;
     }
 	@Override
 	public void addFavConcert(ConcertFavoriteRequestDTO dto) {
 		String token = encryptionService.decrypt(dto.token());
 		User user = userRepository.findByUserSession(token).orElseThrow(()->new IllegalArgumentException("Sesion invalida"));
-		Concert concierto = concertRepository.findByExternalIdConcert(dto.idConcierto()).orElseGet(()->fetchAndSaveConcert(dto));
-		boolean alreadyFav = user.getFavouriteConcerts().stream().anyMatch(c->c.getexternalIdConcert().equals(dto.idConcertTicketmaster()));
+		Concert concierto = concertRepository.findByExternalIdConcert(dto.idConcierto()).orElseGet(()->saveConcert(dto.idConcierto()));
+		boolean alreadyFav = user.getFavouriteConcerts().stream().anyMatch(c->c.getexternalIdConcert().equals(dto.idConcierto()));
 		if (alreadyFav) {
             throw new IllegalArgumentException("El concierto ya está en favoritos");
         }
-		
+		user.getFavouriteConcerts().add(concierto);
+		userRepository.save(user);
 		
 	}
-	private Concert fetchAndSaveConcert(String idConcertTicketmaster) {
+	private Concert saveConcert(String idConcertTicketmaster) {
 		
 		
         TicketMasterEvent event = restClient.get()
@@ -87,17 +90,20 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
                 newVenue.setVenueLocation(location);
                 return venueRepository.save(newVenue);
             });
-
-      
-        String localTime = event.dates().start().localTime() != null
-            ? event.dates().start().localTime()
-            : "00:00:00";
-        LocalDateTime concertDate = LocalDateTime.parse(
-            event.dates().start().localDate() + "T" + localTime);
+        
+        String localTime = "00:00:00"; 
+		if (event.dates().start().localTime() != null) {
+			localTime = event.dates().start().localTime();
+		}
+       
+        
+        LocalDateTime concertDate = LocalDateTime.parse(event.dates().start().localDate() + "T" + localTime);
 
     
         String artistName = event._embedded().attractions().get(0).name();
+        
         String artistGenre = null;
+        
         if (event.classifications() != null
                 && !event.classifications().isEmpty()
                 && event.classifications().get(0).genre() != null) {
@@ -108,12 +114,7 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
         Artist artist = findAndSaveArtistService.getArtistByNameFromSpotifyAndSave(artistName, artistGenre);
 
       
-        Concert concert = new Concert(
-            event.id(),
-            concertDate,
-            event.url(),
-            venue
-        );
+        Concert concert = new Concert(event.id(),concertDate,event.url(),venue);
         concert.getArtists().add(artist);
 
         return concertRepository.save(concert);
