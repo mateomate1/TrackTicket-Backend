@@ -40,7 +40,7 @@ public class Artist {
 	@ManyToMany(mappedBy = "artists")
 	private List<Concert> concerts;
 	
-	protected Artist() {}
+	public Artist() {}
 	
 	public Artist(Long idArtist, String artistName, String musicGenre, String spotifyLink) {
 		this.idArtist = idArtist;
@@ -57,6 +57,14 @@ public class Artist {
 
 	public void setIdArtist(Long idArtist) {
 		this.idArtist = idArtist;
+	}
+	
+	public String getExternalIdArtist() {
+		return externalIdArtist;
+	}
+	
+	public void setExternalIdArtist(String externalIdArtist) {
+		this.externalIdArtist = externalIdArtist;
 	}
 
 	public String getArtistName() {
@@ -82,4 +90,12 @@ public class Artist {
 	public void setSpotifyLink(String spotifyLink) {
 		this.spotifyLink = spotifyLink;
 	}	
+	
+	public String getArtistImageUrl() {
+		return this.artistImageUrl;
+	}
+	
+	public void setArtistImageUrl(String artistImageUrl) {
+		this.artistImageUrl = artistImageUrl;
+	}
 }

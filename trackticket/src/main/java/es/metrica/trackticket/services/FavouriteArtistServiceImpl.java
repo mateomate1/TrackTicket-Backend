@@ -1,56 +1,36 @@
 package es.metrica.trackticket.services;
 
-import java.time.LocalDateTime;
-import java.util.Base64;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import es.metrica.trackticket.dto.ArtistResponseDTO;
 import es.metrica.trackticket.dto.FavouriteArtistRequestDTO;
 import es.metrica.trackticket.dto.TokenRequestDTO;
+import es.metrica.trackticket.dto.mapper.ArtistMapper;
+import es.metrica.trackticket.dto.mapper.ArtistMapper.SpotifyGetArtistResponse;
+import es.metrica.trackticket.models.Artist;
+import es.metrica.trackticket.repositories.ArtistRepository;
+import es.metrica.trackticket.repositories.UserRepository;
 
 @Service
 public class FavouriteArtistServiceImpl implements FavouriteArtistService {
-	
+
 	private RestClient restClientArtistSearch;
-	private RestClient restClientToken;
-	private String token;
-	private LocalDateTime tokenExpiration;
-	private String clientId;
-	private String clientSecret;
-	
+	private UserRepository userRepository;
+	private ArtistRepository artistRepository;
+	private SpotifyTokenService spotifyTokenService;
+
 	public FavouriteArtistServiceImpl(RestClient.Builder restClientBuilder, @Value("${spotify.api.url}") String apiUrl,
-			@Value("${spotify.token.url}") String tokenUrl, @Value("${spotify.client.id}") String clientId,
-			@Value("${spotify.client.secret}") String clientSecret) {
+			SpotifyTokenService spotifyTokenService, UserRepository userRepository, ArtistRepository artistRepository) {
 		this.restClientArtistSearch = restClientBuilder.clone().baseUrl(apiUrl).build();
-		this.restClientToken = restClientBuilder.clone().baseUrl(tokenUrl).build();
-		this.tokenExpiration = LocalDateTime.now().minusSeconds(1);
-		this.clientId = clientId;
-		this.clientSecret = clientSecret;
-		this.token = "";
+		this.spotifyTokenService = spotifyTokenService;
+		this.userRepository = userRepository;
+		this.artistRepository = artistRepository;
 	}
 
-	private String getToken() {
-
-		if (LocalDateTime.now().isAfter(this.tokenExpiration)) {
-			String credentials = this.clientId + ":" + this.clientSecret;
-			credentials = Base64.getEncoder().encodeToString(credentials.getBytes());
-
-			SpotifyTokenResponse response = restClientToken.post().contentType(MediaType.APPLICATION_FORM_URLENCODED)
-					.header("Authorization", "Basic " + credentials).body("grant_type=client_credentials").retrieve()
-					.body(SpotifyTokenResponse.class);
-
-			this.token = response.access_token();
-			this.tokenExpiration = LocalDateTime.now().plusSeconds(response.expires_in());
-		}
-
-		return this.token;
-	}
-	
 	@Override
 	public List<ArtistResponseDTO> getFavouriteArtists(TokenRequestDTO dto) {
 		// TODO Auto-generated method stub
@@ -60,15 +40,31 @@ public class FavouriteArtistServiceImpl implements FavouriteArtistService {
 	@Override
 	public void addFavouriteArtist(FavouriteArtistRequestDTO dto) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void deleteFavouriteArtist(FavouriteArtistRequestDTO dto) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
-	private record SpotifyTokenResponse(String access_token, int expires_in) {}
+
+	public Artist getArtistFromSpotifyAndSave(String spotifyId, String artistGenre) {
+
+		Artist artist = artistRepository.findByExternalIdArtist(spotifyId).orElse(null);
+
+		if (artist != null) {
+			return artist;
+		}
+
+		SpotifyGetArtistResponse response = restClientArtistSearch.get().uri("/artists/{id}", spotifyId)
+				.header("Authorization", "Bearer " + spotifyTokenService.getToken()).retrieve()
+				.body(SpotifyGetArtistResponse.class);
+		
+		artist = ArtistMapper.mapToArtist(response, spotifyId, artistGenre);
+
+		return artist;
+
+	}
 
 }

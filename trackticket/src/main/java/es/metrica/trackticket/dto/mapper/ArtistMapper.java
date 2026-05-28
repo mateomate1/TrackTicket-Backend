@@ -3,6 +3,7 @@ package es.metrica.trackticket.dto.mapper;
 import java.util.List;
 
 import es.metrica.trackticket.dto.ArtistResponseDTO;
+import es.metrica.trackticket.models.Artist;
 
 public class ArtistMapper {
 
@@ -12,7 +13,25 @@ public class ArtistMapper {
 		return new ArtistResponseDTO(response.artists().items().getFirst().id(), name, playlistUrl,
 				response.artists().items().getFirst().images().getFirst().url(), genre, albums);
 	}
+	
+	public static Artist mapToArtist(SpotifyGetArtistResponse response, String externalIdArtist, String musicGenre) {
+		
+		Artist artist = new Artist();
+		
+		artist.setArtistName(response.name());
+		artist.setExternalIdArtist(externalIdArtist);
+		artist.setMusicGenre(musicGenre);
+		artist.setSpotifyLink(response.external_urls().spotify());
+		artist.setArtistImageUrl(response.images().getFirst().url());
+		
+		return null;
+	}
+	
+	
 
+	public record SpotifyGetArtistResponse(String name, List<SpotifyImage> images, SpotifyExternalUrls external_urls) {
+	}
+		
 	public record SpotifyArtistSearchResponse(SpotifyArtistItems artists) {
 	}
 
