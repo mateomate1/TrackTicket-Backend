@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import es.metrica.trackticket.dto.ConcertFavoriteRequestDTO;
 import es.metrica.trackticket.dto.ConcertResponseDTO;
 import es.metrica.trackticket.dto.TokenRequestDTO;
+import es.metrica.trackticket.services.FavouriteConcertService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,6 +23,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/v1/favourites/concerts")
 @Tag(name = "Favourite concerts", description = "Endpoints para gestión de conciertos favoritos")
 public class FavouriteConcertController {
+	
+	private final FavouriteConcertService favouriteConcertService;
+	
+	public FavouriteConcertController(FavouriteConcertService favouriteConcertService) {
+		this.favouriteConcertService = favouriteConcertService;
+	}
 	
 	@PostMapping("/list")
 	@Operation(summary = "Listar conciertos favoritos")
@@ -33,6 +40,8 @@ public class FavouriteConcertController {
 	@Operation(summary = "Añadir concierto a favoritos")
 	@ApiResponse(responseCode = "201", description = "Concierto añadido correctamente")
 	public ResponseEntity<Void> addFavConcert(@RequestBody ConcertFavoriteRequestDTO dto) {
+		
+		favouriteConcertService.addFavConcert(dto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
