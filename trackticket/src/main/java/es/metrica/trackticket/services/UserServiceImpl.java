@@ -41,6 +41,14 @@ public class UserServiceImpl implements UserService {
 		String email = encryptionService.decrypt(dto.email());
 		String password = encryptionService.decrypt(dto.password());
 
+		if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+			throw new IllegalArgumentException("El email debe tener formato válido");
+		}
+
+		if (password.length() < 8) {
+			throw new IllegalArgumentException("La contraseña debe tener mínimo 8 caracteres");
+		}
+
 		boolean existsName = userRepository.findAll().stream()
 				.anyMatch(n -> passwordEncoder.matches(name, n.getUserName()));
 
@@ -113,7 +121,7 @@ public class UserServiceImpl implements UserService {
 
 		}
 	}
-	
+
 	@Transactional
 	@Override
 	public void addFavouriteArtist(String token, Artist artist) {
