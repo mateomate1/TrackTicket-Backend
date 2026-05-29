@@ -27,7 +27,8 @@ public class FindAndSaveArtistServiceImpl implements FindAndSaveArtistService {
 		this.spotifyTokenService = spotifyTokenService;
 		this.artistRepository = artistRepository;
 	}
-
+	
+	@Override
 	public Artist getArtistFromSpotifyAndSave(String spotifyId, String artistGenre) {
 
 		Optional<Artist> existingArtist = artistRepository.findByExternalIdArtist(spotifyId);
@@ -49,6 +50,7 @@ public class FindAndSaveArtistServiceImpl implements FindAndSaveArtistService {
 		return artistRepository.save(artist);
 	}
 
+	@Override
 	public Artist getArtistByNameFromSpotifyAndSave(String artistName, String artistGenre) {
 
 		SpotifyArtistSearchResponse response = spotifyRestClient.get().uri(uriBuilder -> {
@@ -61,15 +63,15 @@ public class FindAndSaveArtistServiceImpl implements FindAndSaveArtistService {
 		if (response == null || response.artists().items().isEmpty()) {
 			throw new ResourceNotFoundException("No se encuentran resultados para ese artista.");
 		}
-		
+
 		Artist artist = ArtistMapper.mapToArtistWithName(artistName, artistGenre, response);
-		
+
 		Optional<Artist> existingArtist = artistRepository.findByExternalIdArtist(artist.getExternalIdArtist());
 
 		if (existingArtist.isPresent()) {
 			return existingArtist.get();
 		}
-		
+
 		return artistRepository.save(artist);
 	}
 }

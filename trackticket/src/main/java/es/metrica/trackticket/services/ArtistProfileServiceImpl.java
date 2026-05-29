@@ -45,7 +45,7 @@ public class ArtistProfileServiceImpl implements ArtistProfileService {
 		List<String> albums = this.getAlbums(response.artists().items().getFirst().id());
 		String playlistUrl = this.getPlaylist(artistName);
 
-		return ArtistMapper.mapToArtistResponseDTO(artistName, artistGenre, response, albums, playlistUrl);
+		return ArtistMapper.fromSpotifyToArtistResponseDTO(artistName, artistGenre, response, albums, playlistUrl);
 	}
 
 	private List<String> getAlbums(String artistId) {

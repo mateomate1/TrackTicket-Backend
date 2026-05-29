@@ -42,7 +42,7 @@ public class EncryptionServiceTest {
 
         assertEquals("hola", resultado);
     }
-
+    
     @Test
     void decrypt_datosNoCifrados_lanzaExcepcion() {
         assertThrows(RuntimeException.class, () -> encryptionService.decrypt("estoNoEstaCifrado"));
