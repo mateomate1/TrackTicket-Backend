@@ -1,7 +1,13 @@
 package es.metrica.trackticket.services;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 import java.util.UUID;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,7 +37,6 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void register(RegisterRequestDTO dto) {
-
 		String name = encryptionService.decrypt(dto.name());
 		String email = encryptionService.decrypt(dto.email());
 		String password = encryptionService.decrypt(dto.password());
@@ -53,7 +58,6 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public String login(LoginRequestDTO dto) {
-
 		String user = encryptionService.decrypt(dto.user());
 		String password = encryptionService.decrypt(dto.password());
 
@@ -81,7 +85,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public void logOut(TokenRequestDTO dto) {
-
 		String token = encryptionService.decrypt(dto.token());
 
 		Optional<User> searchedUser = userRepository.findByUserSession(token);
@@ -98,7 +101,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public void deleteAccount(TokenRequestDTO dto) {
-
 		String token = encryptionService.decrypt(dto.token());
 
 		Optional<User> searchedUser = userRepository.findByUserSession(token);
@@ -111,7 +113,7 @@ public class UserServiceImpl implements UserService {
 
 		}
 	}
-
+	
 	@Transactional
 	@Override
 	public void addFavouriteArtist(String token, Artist artist) {

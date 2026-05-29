@@ -27,7 +27,7 @@ public class FindAndSaveArtistServiceImpl implements FindAndSaveArtistService {
 		this.spotifyTokenService = spotifyTokenService;
 		this.artistRepository = artistRepository;
 	}
-
+	
 	@Override
 	public Artist getArtistFromSpotifyAndSave(String spotifyId, String artistGenre) {
 

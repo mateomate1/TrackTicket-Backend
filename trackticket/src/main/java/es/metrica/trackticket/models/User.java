@@ -34,32 +34,19 @@ public class User {
 	private String userSession;
 
 	@ManyToMany
-	@JoinTable(
-			name = "users_favourite_artists",
-			joinColumns = @JoinColumn(name = "id_user"),
-			inverseJoinColumns = @JoinColumn(name = "id_artist"))
+	@JoinTable(name = "users_favourite_artists", joinColumns = @JoinColumn(name = "id_user"), inverseJoinColumns = @JoinColumn(name = "id_artist"))
 	private List<Artist> favouriteArtists = new ArrayList<>();
-	
+
 	@ManyToMany
-	@JoinTable(
-			name = "users_favourite_concerts",
-			joinColumns = @JoinColumn(name = "id_user"),
-			inverseJoinColumns = @JoinColumn(name = "id_concert"))
+	@JoinTable(name = "users_favourite_concerts", joinColumns = @JoinColumn(name = "id_user"), inverseJoinColumns = @JoinColumn(name = "id_concert"))
 	private List<Concert> favouriteConcerts = new ArrayList<>();
 
-	public User(Long idUser, String userName, String email, String password) {
-		this.idUser = idUser;
-		this.userName = userName;
-		this.email = email;
-		this.password = password;
-	}
-
-	public User(String userName, String email, String password ) {
+	public User(String userName, String email, String password) {
 		setUserName(userName);
 		setEmail(email);
 		setPassword(password);
 	}
-	
+
 	protected User() {
 	}
 
@@ -94,11 +81,11 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
 	public String getUserSession() {
 		return userSession;
 	}
-	
+
 	public void setUserSession(String token) {
 		this.userSession = token;
 	}
