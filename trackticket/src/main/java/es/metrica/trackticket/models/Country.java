@@ -23,7 +23,7 @@ public class Country {
 		this.countryName = countryName;
 	}
 	
-	protected Country() {}
+	public Country() {}
 
 	public Long getIdCountry() {
 		return idCountry;

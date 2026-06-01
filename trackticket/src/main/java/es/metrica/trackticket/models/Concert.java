@@ -1,5 +1,6 @@
 package es.metrica.trackticket.models;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +27,12 @@ public class Concert {
 
 	@Column(name = "external_id_concert", unique = true, nullable = false)
 	private String externalIdConcert;
+	
+	@Column(name = "concert_name", nullable = false) 
+	private String concertName;
 
 	@Column(name = "concert_date", nullable = false)
-	private LocalDateTime concertDate;
+	private LocalDate concertDate;
 
 	@Column(name = "sell_link")
 	private String sellLink;
@@ -47,16 +51,19 @@ public class Concert {
 	protected Concert() {
 	}
 
-	public Concert(Long idConcert, LocalDateTime concertDate, String sellLink, Venue venue) {
-		super();
-		this.idConcert = idConcert;
+	public Concert(String externalIdConcert, String concertName, LocalDate concertDate, String sellLink, Venue venue) {
+		this.externalIdConcert = externalIdConcert;
+		this.concertName = concertName;
 		this.concertDate = concertDate;
 		this.sellLink = sellLink;
 		this.venue = venue;
 		this.artists = new ArrayList<>();
 		this.users = new ArrayList<>();
 	}
-
+	
+	public String getexternalIdConcert() {
+		return externalIdConcert;
+	}
 	public Long getIdConcert() {
 		return idConcert;
 	}
@@ -65,11 +72,19 @@ public class Concert {
 		this.idConcert = idConcert;
 	}
 
-	public LocalDateTime getConcertDate() {
+	public LocalDate getConcertDate() {
 		return concertDate;
 	}
 
-	public void setConcertDate(LocalDateTime concertDate) {
+	public String getConcertName() { 
+		return concertName;
+	}
+
+	public void setConcertName(String concertName) { 
+		this.concertName = concertName;
+	}
+	
+	public void setConcertDate(LocalDate concertDate) {
 		this.concertDate = concertDate;
 	}
 
@@ -87,6 +102,14 @@ public class Concert {
 
 	public void setVenue(Venue venue) {
 		this.venue = venue;
+		
+	}
+	public List<Artist> getArtists() {
+		return artists;
+	}
+
+	public void setArtists(List<Artist> artists) {
+		this.artists = artists;
 	}
 
 }

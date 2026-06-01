@@ -12,7 +12,7 @@ import es.metrica.trackticket.models.Concert;
 @Repository
 public interface ConcertRepository extends JpaRepository<Concert, Long>{
 
-	Optional<Concert> findByExternalIdConcert(Long externalIdConcert);
+	Optional<Concert> findByExternalIdConcert(String externalIdConcert);
 	
 	List<Concert> findByConcertDate(LocalDateTime concertDate);
 	

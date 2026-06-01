@@ -25,7 +25,7 @@ public class City {
 	@JoinColumn (name = "id_state", nullable = false)
 	private State state;
 	
-	protected City() {}
+	public City() {}
 	
 	public City(Long idCity, String cityName, State state) {
 		this.idCity = idCity;

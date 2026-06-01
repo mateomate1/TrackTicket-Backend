@@ -21,13 +21,19 @@ public class Location {
 	@Column (name = "longitude", nullable = false)
 	private double longitude;
 	
-	public Location(Long idLocation, float latitude, float longitude) {
+	@Column (name = "state")
+	private String state;
+
+	@Column (name = "country") 
+	private String country;
+	
+	public Location(Long idLocation, double latitude, double longitude) {
 		this.idLocation = idLocation;
 		this.latitude = latitude;
 		this.longitude = longitude;
 	}
 	
-	protected Location() {}
+	public Location() {}
 
 	public Long getIdLocation() {
 		return idLocation;
@@ -41,7 +47,7 @@ public class Location {
 		return latitude;
 	}
 
-	public void setLatitude(float latitude) {
+	public void setLatitude(double latitude) {
 		this.latitude = latitude;
 	}
 
@@ -49,7 +55,23 @@ public class Location {
 		return longitude;
 	}
 
-	public void setLongitude(float longitude) {
+	public void setLongitude(double longitude) {
 		this.longitude = longitude;
 	}	
+	
+	public String getState() { 
+		return state;
+	}
+
+	public void setState(String state) { 
+		this.state = state;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) { 
+		this.country = country;
+	}
 }

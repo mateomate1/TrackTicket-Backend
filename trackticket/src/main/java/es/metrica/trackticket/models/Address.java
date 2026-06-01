@@ -39,7 +39,7 @@ public class Address {
 		this.city = city;
 	}
 
-	protected Address() {
+	public Address() {
 	}
 
 	public Long getIdAddress() {
