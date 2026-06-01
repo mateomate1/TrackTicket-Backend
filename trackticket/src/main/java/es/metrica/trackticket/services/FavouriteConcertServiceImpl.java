@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
 import es.metrica.trackticket.dto.ConcertFavoriteRequestDTO;
@@ -16,17 +15,23 @@ import es.metrica.trackticket.models.Address;
 import es.metrica.trackticket.models.Artist;
 import es.metrica.trackticket.models.City;
 import es.metrica.trackticket.models.Concert;
+import es.metrica.trackticket.models.Country;
 import es.metrica.trackticket.models.Location;
+import es.metrica.trackticket.models.State;
 import es.metrica.trackticket.models.User;
 import es.metrica.trackticket.models.Venue;
 import es.metrica.trackticket.repositories.AddressRepository;
 import es.metrica.trackticket.repositories.CityRepository;
 import es.metrica.trackticket.repositories.ConcertRepository;
+import es.metrica.trackticket.repositories.CountryRepository;
 import es.metrica.trackticket.repositories.LocationRepository;
+import es.metrica.trackticket.repositories.StateRepository;
 import es.metrica.trackticket.repositories.UserRepository;
 import es.metrica.trackticket.repositories.VenueRepository;
 @Service
 public class FavouriteConcertServiceImpl implements FavouriteConcertService{
+	private CountryRepository countryRespository;
+	private StateRepository staterepository;
 	private UserRepository userRepository;
     private ConcertRepository concertRepository;
     private VenueRepository venueRepository;
@@ -40,6 +45,8 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
 
     
 	public FavouriteConcertServiceImpl(
+			CountryRepository countryRespository,
+			StateRepository staterepository,
 			CityRepository cityRepository,
 			AddressRepository addressRepository,
             UserRepository userRepository,
@@ -51,6 +58,8 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
             RestClient.Builder restClientBuilder,
             @Value("${ticketmaster.api.url}") String url,
             @Value("${ticketmaster.api.key}") String apiKey) {
+		this.countryRespository       = countryRespository;
+		this.staterepository          = staterepository;
 		this.cityRepository           = cityRepository;
 		this.addressRepository        = addressRepository;
         this.userRepository           = userRepository;
@@ -130,17 +139,31 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
                 Location location = new Location();
                 location.setLatitude(Double.parseDouble(tmVenue.location().latitude()));
                 location.setLongitude(Double.parseDouble(tmVenue.location().longitude()));
-                
                 location.setState(tmVenue.state().name());
                 location.setCountry(tmVenue.country().name());
                 locationRepository.save(location);
+                
+                Country country = new Country();
+                country.setCountryName(tmVenue.country().name());
+                countryRespository.save(country);
+                
+                State state = new State();
+                state.setStateName(tmVenue.state().name());
+                state.setCountry(country);
+                staterepository.save(state);
+                
                 City city = new City();
                 city.setCityName(tmVenue.city.name);
-                city.setState(tmVenue.city.state);
+                city.setState(state);
+                cityRepository.save(city);
+                
                 Address address = new Address();
                 address.setFirstLine(tmVenue.address.line1);
                 address.setSecondLine(tmVenue.address.line2);
+                address.setZipCode(tmVenue.postalCode);
+                address.setCity(city);
                 addressRepository.save(address);
+                
                 Venue newVenue = new Venue();
                 newVenue.setVenueName(tmVenue.name());
                 newVenue.setVenueLocation(location);
@@ -237,7 +260,7 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
     		String name, String postalCode, TicketMasterLocation location,
 			TicketMasterAddress address, TicketMasterState state, TicketMasterCountry country,TicketMasterCity city 
     ) {}
-    private record TicketMasterCity(String name,String state) {}
+    private record TicketMasterCity(String name) {}
     private record TicketMasterAddress(String line1, String line2) {}
     private record TicketMasterState(String name) {}
     private record TicketMasterCountry(String name) {}
