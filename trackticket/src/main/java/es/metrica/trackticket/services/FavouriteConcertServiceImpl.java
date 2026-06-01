@@ -38,7 +38,6 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
     private CityRepository cityRepository;
     private LocationRepository locationRepository;
     private AddressRepository addressRepository;
-    private EncryptionService encryptionService;
     private FindAndSaveArtistServiceImpl findAndSaveArtistService;
     private RestClient restClient;
     private String apiKey;
@@ -53,7 +52,6 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
             ConcertRepository concertRepository,
             VenueRepository venueRepository,
             LocationRepository locationRepository,
-            EncryptionService encryptionService,
             FindAndSaveArtistServiceImpl findAndSaveArtistService,
             RestClient.Builder restClientBuilder,
             @Value("${ticketmaster.api.url}") String url,
@@ -66,7 +64,6 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
         this.concertRepository        = concertRepository;
         this.venueRepository          = venueRepository;
         this.locationRepository       = locationRepository;
-        this.encryptionService        = encryptionService;
         this.findAndSaveArtistService = findAndSaveArtistService;
         this.restClient               = restClientBuilder.baseUrl(url).build();
         this.apiKey                   = apiKey;
@@ -210,6 +207,7 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
 		Address address = venue.getVenueAddress();
 		String fulladdress = address.getFirstLine();
 		fulladdress += ", " + address.getSecondLine();
+		fulladdress += ", " + address.getZipCode();
 		
 
 		
