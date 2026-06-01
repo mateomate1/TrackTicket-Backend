@@ -33,7 +33,8 @@ public class FavouriteConcertController {
 	@PostMapping("/list")
 	@Operation(summary = "Listar conciertos favoritos")
 	public ResponseEntity<List<ConcertResponseDTO>> getFavConcertList(@RequestBody TokenRequestDTO dto) {
-		return ResponseEntity.ok(List.of());
+		
+		return ResponseEntity.ok(favouriteConcertService.getFavConcertList(dto));
 	}
 	
 	@PostMapping("/add")
@@ -49,6 +50,7 @@ public class FavouriteConcertController {
 	@Operation(summary = "Eliminar concierto de favoritos")
 	@ApiResponse(responseCode = "204", description = "Concierto eliminado correctamente")
 	public ResponseEntity<Void> removeFavConcert(@RequestBody ConcertFavoriteRequestDTO dto) {
+		favouriteConcertService.removeFavConcert(dto);
 		return ResponseEntity.noContent().build();
 	}
 	

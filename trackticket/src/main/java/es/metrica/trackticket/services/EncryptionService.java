@@ -14,6 +14,7 @@ public class EncryptionService {
 	
 	public EncryptionService(KeyPair keyPair) {
 		this.keyPair = keyPair;
+		System.out.println(Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()));
 	}
 	
 	public String decrypt(String encryptedData) {
