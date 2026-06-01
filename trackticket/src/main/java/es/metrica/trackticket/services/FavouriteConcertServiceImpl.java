@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
 import es.metrica.trackticket.dto.ConcertFavoriteRequestDTO;
@@ -13,10 +14,13 @@ import es.metrica.trackticket.dto.TokenRequestDTO;
 import es.metrica.trackticket.dto.VenueDTO;
 import es.metrica.trackticket.models.Address;
 import es.metrica.trackticket.models.Artist;
+import es.metrica.trackticket.models.City;
 import es.metrica.trackticket.models.Concert;
 import es.metrica.trackticket.models.Location;
 import es.metrica.trackticket.models.User;
 import es.metrica.trackticket.models.Venue;
+import es.metrica.trackticket.repositories.AddressRepository;
+import es.metrica.trackticket.repositories.CityRepository;
 import es.metrica.trackticket.repositories.ConcertRepository;
 import es.metrica.trackticket.repositories.LocationRepository;
 import es.metrica.trackticket.repositories.UserRepository;
@@ -26,7 +30,9 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
 	private UserRepository userRepository;
     private ConcertRepository concertRepository;
     private VenueRepository venueRepository;
+    private CityRepository cityRepository;
     private LocationRepository locationRepository;
+    private AddressRepository addressRepository;
     private EncryptionService encryptionService;
     private FindAndSaveArtistServiceImpl findAndSaveArtistService;
     private RestClient restClient;
@@ -34,6 +40,8 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
 
     
 	public FavouriteConcertServiceImpl(
+			CityRepository cityRepository,
+			AddressRepository addressRepository,
             UserRepository userRepository,
             ConcertRepository concertRepository,
             VenueRepository venueRepository,
@@ -43,6 +51,8 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
             RestClient.Builder restClientBuilder,
             @Value("${ticketmaster.api.url}") String url,
             @Value("${ticketmaster.api.key}") String apiKey) {
+		this.cityRepository           = cityRepository;
+		this.addressRepository        = addressRepository;
         this.userRepository           = userRepository;
         this.concertRepository        = concertRepository;
         this.venueRepository          = venueRepository;
@@ -59,8 +69,8 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
 	
 	@Override
 	public void addFavConcert(ConcertFavoriteRequestDTO dto) {
-		String token = encryptionService.decrypt(dto.token());
-		User user = userRepository.findByUserSession(token).orElseThrow(()->new IllegalArgumentException("Sesion invalida"));
+		
+		User user = userRepository.findByUserSession(dto.token()).orElseThrow(()->new IllegalArgumentException("Sesion invalida"));
 		
 		boolean alreadyFav = user.getFavouriteConcerts().stream().anyMatch(c->c.getexternalIdConcert().equals(dto.idConcierto()));
 		if (alreadyFav) {
@@ -74,8 +84,8 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
 	
 	@Override
 	public void removeFavConcert(ConcertFavoriteRequestDTO dto) {
-		String token = encryptionService.decrypt(dto.token());
-		User user = userRepository.findByUserSession(token).orElseThrow(()->new IllegalArgumentException("Sesion invalida"));
+	
+		User user = userRepository.findByUserSession(dto.token()).orElseThrow(()->new IllegalArgumentException("Sesion invalida"));
 		boolean remove = user.getFavouriteConcerts().removeIf(c->c.getexternalIdConcert().equals(dto.idConcierto()));
 		if (!remove) {
 			throw new IllegalArgumentException("El concierto no está en tu lista de favoritos");
@@ -87,8 +97,8 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
 	
 	@Override
 	public List<ConcertResponseDTO> getFavConcertList(TokenRequestDTO dto) {
-		String token = encryptionService.decrypt(dto.token());
-		User user = userRepository.findByUserSession(token).orElseThrow(() -> new IllegalArgumentException("Sesión inválida"));
+		
+		User user = userRepository.findByUserSession(dto.token()).orElseThrow(() -> new IllegalArgumentException("Sesión inválida"));
 		return user.getFavouriteConcerts().stream().map(this::mapToConcertResponseDTO).toList();
 		
 	}
@@ -120,13 +130,21 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
                 Location location = new Location();
                 location.setLatitude(Double.parseDouble(tmVenue.location().latitude()));
                 location.setLongitude(Double.parseDouble(tmVenue.location().longitude()));
+                
                 location.setState(tmVenue.state().name());
                 location.setCountry(tmVenue.country().name());
                 locationRepository.save(location);
-
+                City city = new City();
+                city.setCityName(tmVenue.city.name);
+                city.setState(tmVenue.city.state);
+                Address address = new Address();
+                address.setFirstLine(tmVenue.address.line1);
+                address.setSecondLine(tmVenue.address.line2);
+                addressRepository.save(address);
                 Venue newVenue = new Venue();
                 newVenue.setVenueName(tmVenue.name());
                 newVenue.setVenueLocation(location);
+                newVenue.setVenueAddress(address);
                 return venueRepository.save(newVenue);
             });
         
@@ -167,14 +185,17 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
 		Venue venue = concert.getVenue();
 		Location loc = venue.getVenueLocation();
 		Address address = venue.getVenueAddress();
+		String fulladdress = address.getFirstLine();
+		fulladdress += ", " + address.getSecondLine();
 		
-		String fullAddress = address.getFirstLine() + ", " + address.getZipCode() + ", " + address.getCity().getCityName();	
+
+		
 		
 		VenueDTO venueDto = new VenueDTO(
 				venue.getVenueName(),
 				loc.getLatitude(),
 				loc.getLongitude(),
-				fullAddress,       
+				fulladdress,       
 				loc.getState(),  
 				loc.getCountry()
 		);
@@ -213,12 +234,11 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
     ) {}
 
     private record TicketMasterVenue(
-    		String name, 
-    		TicketMasterLocation location,
-    		TicketMasterState state,    
-    		TicketMasterCountry country   
+    		String name, String postalCode, TicketMasterLocation location,
+			TicketMasterAddress address, TicketMasterState state, TicketMasterCountry country,TicketMasterCity city 
     ) {}
-
+    private record TicketMasterCity(String name,String state) {}
+    private record TicketMasterAddress(String line1, String line2) {}
     private record TicketMasterState(String name) {}
     private record TicketMasterCountry(String name) {}
     private record TicketMasterLocation(String latitude, String longitude) {}

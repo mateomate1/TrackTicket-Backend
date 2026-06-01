@@ -10,11 +10,11 @@ public record RegisterRequestDTO(
 		String name, 
 		
 		@NotBlank(message = "El email es obligatorio")
-		@Email(message = "El email debe tener formato email") 
+		
 		String email,
 		
 		@NotBlank(message = "La contraseña es obligatoria") 
-		@Size(min=8, message = "Debe contener al un mínimo de 8 carácteres") 
+		
 		String password ) {
 	
 	/**
