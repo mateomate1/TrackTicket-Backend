@@ -19,6 +19,7 @@ import es.metrica.trackticket.dto.ArtistResponseDTO;
 import es.metrica.trackticket.dto.FavouriteArtistRequestDTO;
 import es.metrica.trackticket.dto.TokenRequestDTO;
 import es.metrica.trackticket.exception.NotLoggedInException;
+import es.metrica.trackticket.exception.ResourceNotFoundException;
 import es.metrica.trackticket.models.Artist;
 import es.metrica.trackticket.models.User;
 import es.metrica.trackticket.repositories.ArtistRepository;
@@ -110,20 +111,38 @@ class FavouriteArtistServiceImplTest {
 	@Test
 	@DisplayName("Tests if correctly throws NotLoggedInException when the user is not found by token")
 	void getFavouriteArtistsUserError() {
-		when(userRepository.findByUserSession("1234")).thenReturn(Optional.of(null));
+		when(userRepository.findByUserSession("1234")).thenReturn(Optional.empty());
 
 		Exception e = assertThrows(NotLoggedInException.class,
 				() -> favouriteArtistService.getFavouriteArtists(new TokenRequestDTO("1234")));
-		
+
 		verify(userRepository).findByUserSession("1234");
 		assertEquals("Not a valid token", e.getMessage());
 	}
-	
-	
 
 	@Test
-	@DisplayName("")
+	@DisplayName("Tests if correctly throws NotLoggedInException when the user is not found by token")
 	void deleteFavouriteArtistUserError() {
+		when(userRepository.findByUserSession("1234")).thenReturn(Optional.empty());
 
+		Exception e = assertThrows(NotLoggedInException.class, () -> favouriteArtistService
+				.deleteFavouriteArtist(new FavouriteArtistRequestDTO("1234", "idArtist", "artistGenre")));
+
+		verify(userRepository).findByUserSession("1234");
+		assertEquals("Not a valid token", e.getMessage());
+	}
+
+	@Test
+	@DisplayName("Tests if correctly throws ResourceNotFoundException when the user is not found by token")
+	void deleteFavouriteArtistArtistError() {
+		when(userRepository.findByUserSession("1234")).thenReturn(Optional.of(user));
+		when(artistRepository.findByExternalIdArtist("idArtist")).thenReturn(Optional.empty());
+
+		Exception e = assertThrows(ResourceNotFoundException.class, () -> favouriteArtistService
+				.deleteFavouriteArtist(new FavouriteArtistRequestDTO("1234", "idArtist", "artistGenre")));
+
+		verify(userRepository).findByUserSession("1234");
+		verify(artistRepository).findByExternalIdArtist("idArtist");
+		assertEquals("The artist is not in our database", e.getMessage());
 	}
 }
