@@ -6,6 +6,7 @@ public record ArtistResponseDTO (
 		
 		String idArtist, 
 		String name,
+		String spotifyProfileLink,
 		String linkList,
 		String linkImage,
 		String genre,
