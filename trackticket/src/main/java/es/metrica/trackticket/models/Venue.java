@@ -29,7 +29,7 @@ public class Venue {
 	@JoinColumn (name = "id_address")
 	private Address venueAddress;
 	
-	protected Venue() {}
+	public Venue() {}
 
 	public Venue(Long idVenue, String venueName, Location venueLocation, Address venueAddress) {
 		this.idVenue = idVenue;

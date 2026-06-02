@@ -2,7 +2,9 @@ package es.metrica.trackticket.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
+
 public record RegisterRequestDTO(
+
 
         @NotBlank(message = "El nombre es obligatorio")
         String name,
