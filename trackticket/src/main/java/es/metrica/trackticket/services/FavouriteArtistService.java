@@ -13,4 +13,6 @@ public interface FavouriteArtistService {
 	void addFavouriteArtist(FavouriteArtistRequestDTO dto);
 	
 	void deleteFavouriteArtist(FavouriteArtistRequestDTO dto);
+	
+	boolean isFavouriteArtist(FavouriteArtistRequestDTO dto);
 }

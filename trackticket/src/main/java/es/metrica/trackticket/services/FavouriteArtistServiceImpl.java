@@ -1,6 +1,7 @@
 package es.metrica.trackticket.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,8 +60,27 @@ public class FavouriteArtistServiceImpl implements FavouriteArtistService {
 				.orElseThrow(() -> new ResourceNotFoundException("The artist is not in our database"));
 
 		user.getFavouriteArtists().remove(artist);
-		
+
 		userRepository.save(user);
+	}
+
+	@Override
+	public boolean isFavouriteArtist(FavouriteArtistRequestDTO dto) {
+
+		User user = userRepository.findByUserSession(dto.token())
+				.orElseThrow(() -> new NotLoggedInException("Not a valid token"));
+
+		Optional<Artist> artist = artistRepository.findByExternalIdArtist(dto.idArtist());
+		
+		if(artist.isEmpty()) {
+			return false;
+		}
+		
+		if(user.getFavouriteArtists().contains(artist.get())) {
+			return true;
+		}
+		
+		return false;
 	}
 
 }
