@@ -52,4 +52,10 @@ public class FavouriteArtistController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PostMapping("/is-fav")
+	@Operation(summary = "Verificar si un artista está guardado como favoritos o no")
+	public ResponseEntity<Boolean> isFavArtist(@RequestBody FavouriteArtistRequestDTO dto) {
+		return ResponseEntity.ok(favouriteArtistService.isFavouriteArtist(dto));
+	}
+
 }

@@ -4,18 +4,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,6 +24,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import es.metrica.trackticket.dto.LoginRequestDTO;
 import es.metrica.trackticket.dto.RegisterRequestDTO;
 import es.metrica.trackticket.dto.TokenRequestDTO;
+import es.metrica.trackticket.exception.NotLoggedInException;
+import es.metrica.trackticket.models.Artist;
 import es.metrica.trackticket.models.User;
 import es.metrica.trackticket.repositories.UserRepository;
 import es.metrica.trackticket.services.EncryptionService;
@@ -40,6 +40,8 @@ public class UserServiceImpTest {
 	private BCryptPasswordEncoder passwordEncoder;
 	@Mock
 	private EncryptionService encryptionService;
+	@Mock
+	private User user;
 	@InjectMocks
 	private UserServiceImpl userService;
 
@@ -206,5 +208,45 @@ public class UserServiceImpTest {
 		when(userRepository.findByUserSession("tokenReal")).thenReturn(Optional.empty());
 
 		assertThrows(IllegalArgumentException.class, () -> userService.deleteAccount(dto));
+	}
+	
+	@Test
+	@DisplayName("Tests if addFavouriteArtist correctly saves a user's favourite artist")
+	void addFavouriteArtistValid() {
+		Artist artist = new Artist("externalId", "artistName");
+		when(userRepository.findByUserSession("1234")).thenReturn(Optional.of(user));
+		List<Artist> favourites = new ArrayList<>();
+		when(user.getFavouriteArtists()).thenReturn(favourites);
+		
+		userService.addFavouriteArtist("1234", artist);
+		
+		verify(user, times(2)).getFavouriteArtists();
+		verify(userRepository).save(user);
+	}
+	
+	@Test
+	@DisplayName("Tests if addFavouriteArtist doesn't save a user's favourite artist if it's already a favourite artist")
+	void addAlreadyFavouriteArtist() {
+		Artist artist = new Artist("externalId", "artistName");
+		List<Artist> favourites = List.of(artist);
+		when(userRepository.findByUserSession("1234")).thenReturn(Optional.of(user));
+		when(user.getFavouriteArtists()).thenReturn(favourites);
+		
+		userService.addFavouriteArtist("1234", artist);
+		
+		verify(userRepository, never()).save(user);
+	}
+	
+	@Test
+	@DisplayName("Tests if addFavouriteArtist throws NotLoggedInException when the token is not valid")
+	void addFavouriteArtistNoToken() {
+		Artist artist = new Artist("externalId", "artistName");
+		when(userRepository.findByUserSession("1234")).thenReturn(Optional.empty());
+		
+		Exception e = assertThrows(NotLoggedInException.class, () -> userService.addFavouriteArtist("1234", artist));
+		
+		assertEquals("Not a valid token", e.getMessage());
+		verify(user, never()).getFavouriteArtists();
+		verify(userRepository, never()).save(user);
 	}
 }

@@ -1,10 +1,13 @@
 package es.metrica.trackticket;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -133,7 +136,7 @@ class FavouriteArtistServiceImplTest {
 	}
 
 	@Test
-	@DisplayName("Tests if correctly throws ResourceNotFoundException when the user is not found by token")
+	@DisplayName("Tests if correctly throws ResourceNotFoundException when the artist is not found")
 	void deleteFavouriteArtistArtistError() {
 		when(userRepository.findByUserSession("1234")).thenReturn(Optional.of(user));
 		when(artistRepository.findByExternalIdArtist("idArtist")).thenReturn(Optional.empty());
@@ -144,5 +147,59 @@ class FavouriteArtistServiceImplTest {
 		verify(userRepository).findByUserSession("1234");
 		verify(artistRepository).findByExternalIdArtist("idArtist");
 		assertEquals("The artist is not in our database", e.getMessage());
+	}
+	
+	@Test
+	@DisplayName("Tests if isFavouriteArtist returns true when the user has that artist in the favouriteArtists list")
+	void isFavouriteArtistTrue() {
+		FavouriteArtistRequestDTO dto = new FavouriteArtistRequestDTO("1234", "idArtist", "Rap/HipHop");
+		Artist artist = new Artist("idArtist", "artistName");
+		List<Artist> favourites = List.of(artist);
+		when(userRepository.findByUserSession("1234")).thenReturn(Optional.of(user));
+		when(artistRepository.findByExternalIdArtist("idArtist")).thenReturn(Optional.of(artist));
+		when(user.getFavouriteArtists()).thenReturn(favourites);
+		
+		assertTrue(favouriteArtistService.isFavouriteArtist(dto));
+		verify(userRepository).findByUserSession("1234");
+		verify(artistRepository).findByExternalIdArtist("idArtist");
+	}
+	
+	@Test
+	@DisplayName("Tests if isFavouriteArtist returns false when the user doesn't have that artist in the favouriteArtists list")
+	void isFavouriteArtistFalse() {
+		FavouriteArtistRequestDTO dto = new FavouriteArtistRequestDTO("1234", "idArtist", "Rap/HipHop");
+		Artist artist = new Artist("idArtist", "artistName");
+		List<Artist> favourites = new ArrayList<>();
+		when(userRepository.findByUserSession("1234")).thenReturn(Optional.of(user));
+		when(artistRepository.findByExternalIdArtist("idArtist")).thenReturn(Optional.of(artist));
+		when(user.getFavouriteArtists()).thenReturn(favourites);
+		
+		assertFalse(favouriteArtistService.isFavouriteArtist(dto));
+		verify(userRepository).findByUserSession("1234");
+		verify(artistRepository).findByExternalIdArtist("idArtist");
+	}
+	
+	@Test
+	@DisplayName("Tests if isFavouriteArtist throws NotLoggedInException when the user is not found by token")
+	void isFavouriteArtistNLIE() {
+		when(userRepository.findByUserSession("1234")).thenReturn(Optional.empty());
+
+		Exception e = assertThrows(NotLoggedInException.class, () -> favouriteArtistService
+				.isFavouriteArtist(new FavouriteArtistRequestDTO("1234", "idArtist", "artistGenre")));
+
+		verify(userRepository).findByUserSession("1234");
+		assertEquals("Not a valid token", e.getMessage());
+	}
+	@Test
+	@DisplayName("Tests if correctly returns false when the artist is not found in the database")
+	void isFavouriteArtistFalseWhenNotFound() {
+		FavouriteArtistRequestDTO dto = new FavouriteArtistRequestDTO("1234", "idArtist", "Rap/HipHop");
+		when(userRepository.findByUserSession("1234")).thenReturn(Optional.of(user));
+		when(artistRepository.findByExternalIdArtist("idArtist")).thenReturn(Optional.empty());
+		
+		assertFalse(favouriteArtistService.isFavouriteArtist(dto));
+		
+		verify(userRepository).findByUserSession("1234");
+		verify(artistRepository).findByExternalIdArtist("idArtist");
 	}
 }
