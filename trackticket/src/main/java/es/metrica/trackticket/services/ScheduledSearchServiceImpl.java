@@ -78,8 +78,8 @@ public class ScheduledSearchServiceImpl implements ScheduledSearchService {
 						.append(concert.getConcertDate()).append(", ha sido cancelado.");
 
 				for (User user : usersWithFavouriteConcert) {
-					notificationRepository
-							.save(new Notification(message.toString(), NotificationType.CANCELLED_CONCERT, user));
+					notificationRepository.save(new Notification(message.toString(), NotificationType.CANCELLED_CONCERT,
+							user, LocalDateTime.now()));
 				}
 
 				concertRepository.deleteById(concert.getIdConcert());
@@ -94,8 +94,8 @@ public class ScheduledSearchServiceImpl implements ScheduledSearchService {
 						.append(mapVenueToFullAddress(foundConcert.getVenue()));
 
 				for (User user : usersWithFavouriteConcert) {
-					notificationRepository
-							.save(new Notification(message.toString(), NotificationType.MODIFIED_CONCERT, user));
+					notificationRepository.save(new Notification(message.toString(), NotificationType.MODIFIED_CONCERT,
+							user, LocalDateTime.now()));
 				}
 
 				concert.setVenue(foundConcert.getVenue());
@@ -112,8 +112,8 @@ public class ScheduledSearchServiceImpl implements ScheduledSearchService {
 						.append(foundConcert.getConcertDate());
 
 				for (User user : usersWithFavouriteConcert) {
-					notificationRepository
-							.save(new Notification(message.toString(), NotificationType.MODIFIED_CONCERT, user));
+					notificationRepository.save(new Notification(message.toString(), NotificationType.MODIFIED_CONCERT,
+							user, LocalDateTime.now()));
 				}
 
 				concert.setConcertDate(foundConcert.getConcertDate());
@@ -156,7 +156,7 @@ public class ScheduledSearchServiceImpl implements ScheduledSearchService {
 
 				for (User user : usersWithFavouriteArtist) {
 					notificationRepository.save(new Notification("Nuevo/s concierto/s de " + artist.getArtistName(),
-							NotificationType.NEW_CONCERT, user));
+							NotificationType.NEW_CONCERT, user, LocalDateTime.now()));
 				}
 
 				artistRepository.save(artist);

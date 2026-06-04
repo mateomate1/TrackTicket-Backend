@@ -1,6 +1,7 @@
 	package es.metrica.trackticket.services;
 	
 	import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.scheduling.annotation.Scheduled;
@@ -55,12 +56,11 @@ import es.metrica.trackticket.repositories.UserRepository;
 				for (User user : usersWithFavouriteConcert) {
 					String fullMessage = messageTitle + " para tu concierto de " + concert.getConcertName();
 
-					Notification notification = new Notification(
-							null, 
-							false, 
+					Notification notification = new Notification( 
 							fullMessage, 
 							NotificationType.UPCOMING_CONCERT, 
-							user
+							user,
+							LocalDateTime.now()
 					);
 
 					notificationRepository.save(notification);
