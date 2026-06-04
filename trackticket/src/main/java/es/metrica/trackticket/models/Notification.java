@@ -1,4 +1,6 @@
 package es.metrica.trackticket.models;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -30,6 +32,9 @@ public class Notification {
 	@Column (name = "type", nullable = false)
 	private NotificationType type;
 	
+	@Column (name = "notification_timestamp", nullable = false)
+	private LocalDateTime notificationTimestamp;
+	
 	@ManyToOne (fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_user", nullable = false)
 	private User user;
@@ -42,11 +47,12 @@ public class Notification {
 		this.user = user;
 	}
 	
-	public Notification(String message, NotificationType type, User user) {
+	public Notification(String message, NotificationType type, User user, LocalDateTime timestamp) {
 		this.isRead = false;
 		this.message = message;
 		this.type = type;
 		this.user = user;
+		this.notificationTimestamp = timestamp;
 	}
 	
 	protected Notification() {}
@@ -89,6 +95,14 @@ public class Notification {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public LocalDateTime getNotificationTimestamp() {
+		return notificationTimestamp;
+	}
+
+	public void setNotificationTimestamp(LocalDateTime notificationTimestamp) {
+		this.notificationTimestamp = notificationTimestamp;
 	}
 	
 	
