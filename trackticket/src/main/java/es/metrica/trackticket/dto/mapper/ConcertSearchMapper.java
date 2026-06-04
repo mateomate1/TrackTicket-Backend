@@ -5,6 +5,13 @@ import java.util.List;
 
 import es.metrica.trackticket.dto.ConcertResponseDTO;
 import es.metrica.trackticket.dto.VenueDTO;
+import es.metrica.trackticket.models.Address;
+import es.metrica.trackticket.models.City;
+import es.metrica.trackticket.models.Concert;
+import es.metrica.trackticket.models.Country;
+import es.metrica.trackticket.models.Location;
+import es.metrica.trackticket.models.State;
+import es.metrica.trackticket.models.Venue;
 
 public final class ConcertSearchMapper {
 
@@ -34,8 +41,33 @@ public final class ConcertSearchMapper {
 
 		String address = addressBuilder.toString();
 
-		return new ConcertResponseDTO(idConcert, nameConcert, concertDate, sellLink, artistName, artistGenre, artistLink,
-				new VenueDTO(venueName, latitude, longitude, address, stateName, countryName));
+		return new ConcertResponseDTO(idConcert, nameConcert, concertDate, sellLink, artistName, artistGenre,
+				artistLink, new VenueDTO(venueName, latitude, longitude, address, stateName, countryName));
+	}
+
+	public static Concert mapToConcert(TicketMasterEvent event) {
+		String externalId = event.id();
+		String concertName = event.name();
+		LocalDate concertDate = LocalDate.parse(event.dates().start().localDate());
+		String sellLink = event.url();
+		Country country = new Country(event._embedded().venues().getFirst().country().name());
+		State state = new State(event._embedded().venues().getFirst().state().name(), country);
+		City city = new City(event._embedded().venues().getFirst().city().name(), state);
+		String line2 = "";
+		if (event._embedded().venues().getFirst().address().line2() != null) {
+			line2 = event._embedded().venues().getFirst().address().line2();
+		}
+		Address address = new Address(event._embedded().venues().getFirst().address().line1(), line2,
+				event._embedded().venues().getFirst().postalCode(), city);
+		Location location = new Location(Double.valueOf(event._embedded().venues().getFirst().location().latitude()),
+				Double.valueOf(event._embedded().venues().getFirst().location().longitude()));
+		Venue venue = new Venue(event._embedded().venues().getFirst().name(), location, address);
+
+		return new Concert(externalId, concertName, concertDate, sellLink, venue);
+	}
+
+	public static String getConcertId(TicketMasterEvent event) {
+		return event.id();
 	}
 
 	public record TicketMasterResponse(TicketMasterEmbedded _embedded) {
@@ -56,7 +88,7 @@ public final class ConcertSearchMapper {
 
 	private record TicketMasterGenre(String name) {
 	}
-	
+
 	private record TicketMasterDates(TicketMasterStart start) {
 	}
 

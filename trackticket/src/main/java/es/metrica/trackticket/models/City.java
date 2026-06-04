@@ -33,6 +33,11 @@ public class City {
 		this.state = state;
 	}
 	
+	public City(String cityName, State state) {
+		this.cityName = cityName;
+		this.state = state;
+	}
+	
 	public Long getIdCity() {
 		return idCity;
 	}

@@ -50,6 +50,11 @@ public class Artist {
 
 	@ManyToMany(mappedBy = "artists")
 	private List<Concert> concerts;
+	
+	@ElementCollection
+	@CollectionTable(name = "artist_known_concerts", joinColumns = @JoinColumn(name = "id_artist"))
+	@Column(name = "ticketmaster_concert_id")
+	private List<String> knownConcerts;
 
 	protected Artist() {
 	}
@@ -59,6 +64,7 @@ public class Artist {
 		this.artistName = artistName;
 		this.users = new ArrayList<>();
 		this.concerts = new ArrayList<>();
+		this.knownConcerts = new ArrayList<>();
 	}
 
 	public Long getIdArtist() {
@@ -140,4 +146,14 @@ public class Artist {
 	public void setConcerts(List<Concert> concerts) {
 		this.concerts = concerts;
 	}
+
+	public List<String> getKnownConcerts() {
+		return knownConcerts;
+	}
+
+	public void setKnownConcerts(List<String> knownConcerts) {
+		this.knownConcerts = knownConcerts;
+	}
+	
+	
 }
