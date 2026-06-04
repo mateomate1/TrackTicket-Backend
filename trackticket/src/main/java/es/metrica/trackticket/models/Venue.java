@@ -74,11 +74,5 @@ public class Venue {
 
 	public void setVenueAddress(Address venueAddress) {
 		this.venueAddress = venueAddress;
-	}
-	
-	
-	
-	
-	
-	
+	}	
 }

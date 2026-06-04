@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import es.metrica.trackticket.dto.mapper.ConcertSearchMapper;
@@ -85,7 +86,8 @@ public class ScheduledSearchServiceImpl implements ScheduledSearchService {
 				concertRepository.deleteById(concert.getIdConcert());
 			}
 
-			if (foundConcert.getVenue() != null && !concert.getVenue().equals(foundConcert.getVenue())) {
+			if (foundConcert.getVenue() != null
+					&& !concert.getVenue().getVenueName().equals(foundConcert.getVenue().getVenueName())) {
 
 				StringBuilder message = new StringBuilder("El concierto de ");
 				message.append(concert.getArtists().getFirst().getArtistName()).append(", en ")
@@ -123,7 +125,6 @@ public class ScheduledSearchServiceImpl implements ScheduledSearchService {
 			if (hasChanged) {
 				concertRepository.save(concert);
 			}
-
 		}
 	}
 
@@ -133,12 +134,15 @@ public class ScheduledSearchServiceImpl implements ScheduledSearchService {
 
 		List<Artist> allArtists = artistRepository.findAll();
 
+		boolean hasChanged = false;
+
 		for (Artist artist : allArtists) {
 
 			List<String> allConcertsId = this.getAllConcertsId(artist.getArtistName());
 
 			if (artist.getKnownConcerts().isEmpty()) {
 				artist.setKnownConcerts(allConcertsId);
+				hasChanged = true;
 			}
 
 			List<String> newConcerts = new ArrayList<>();
@@ -159,6 +163,10 @@ public class ScheduledSearchServiceImpl implements ScheduledSearchService {
 							NotificationType.NEW_CONCERT, user, LocalDateTime.now()));
 				}
 
+				hasChanged = true;
+			}
+
+			if (hasChanged) {
 				artistRepository.save(artist);
 			}
 		}
@@ -189,14 +197,15 @@ public class ScheduledSearchServiceImpl implements ScheduledSearchService {
 	}
 
 	private Concert findFavouriteConcert(String concertId) {
-		TicketMasterEvent event = restClient.get().uri(
-				uriBuilder -> uriBuilder.path("/events/{id}.json").queryParam("apikey", this.apiKey).build(concertId))
-				.retrieve().body(TicketMasterEvent.class);
-
-		if (event == null) {
+		try {
+			TicketMasterEvent event = restClient.get().uri(uriBuilder -> uriBuilder.path("/events/{id}.json")
+					.queryParam("apikey", this.apiKey).queryParam("locale", "es").build(concertId)).retrieve()
+					.body(TicketMasterEvent.class);
+			
+			return ConcertSearchMapper.mapToConcert(event);
+		} catch (HttpClientErrorException e) {
 			throw new ResourceNotFoundException("Concierto no encontrado");
 		}
-		return ConcertSearchMapper.mapToConcert(event);
 	}
 
 	private String mapVenueToFullAddress(Venue venue) {

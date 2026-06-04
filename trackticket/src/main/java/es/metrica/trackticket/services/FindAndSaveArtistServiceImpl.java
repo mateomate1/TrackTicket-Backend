@@ -1,5 +1,6 @@
 package es.metrica.trackticket.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -99,7 +100,7 @@ public class FindAndSaveArtistServiceImpl implements FindAndSaveArtistService {
 
 		if (playlistResponse == null || playlistResponse.playlists == null
 				|| playlistResponse.playlists().items().isEmpty()) {
-			throw new ResourceNotFoundException("No playlists found for that artist");
+			return "";
 		}
 		
 		if(playlistResponse.playlists().items().get(0) != null) {
@@ -109,7 +110,7 @@ public class FindAndSaveArtistServiceImpl implements FindAndSaveArtistService {
 		if(playlistResponse.playlists().items().get(1) != null) {
 			return playlistResponse.playlists().items().get(1).external_urls().spotify();
 		} else {
-			throw new ResourceNotFoundException("No playlists found for that artist");
+			return "";
 		}
 	}
 
@@ -122,7 +123,7 @@ public class FindAndSaveArtistServiceImpl implements FindAndSaveArtistService {
 				.body(SpotifyAlbumsResponse.class);
 
 		if (albumResponse == null || albumResponse.items().isEmpty()) {
-			throw new ResourceNotFoundException("No albums found for that artist");
+			return new ArrayList<>();
 		}
 
 		return albumResponse.items().stream().filter(Objects::nonNull).map(SpotifyAlbum::name).toList();
