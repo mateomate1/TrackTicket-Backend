@@ -1,11 +1,10 @@
 package es.metrica.trackticket.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import es.metrica.trackticket.dto.ArtistResponseDTO;
@@ -57,7 +56,7 @@ public class ArtistProfileServiceImpl implements ArtistProfileService {
 		}).header("Authorization", "Bearer " + spotifyTokenService.getToken()).retrieve().body(SpotifyAlbumsResponse.class);
 
 		if (albumResponse == null || albumResponse.items().isEmpty()) {
-			throw new ResourceNotFoundException("No albums found for that artist");
+			return new ArrayList<>();
 		}
 
 		return albumResponse.items().stream().map(SpotifyAlbum::name).toList();
@@ -72,7 +71,7 @@ public class ArtistProfileServiceImpl implements ArtistProfileService {
 		}).header("Authorization", "Bearer " + spotifyTokenService.getToken()).retrieve().body(SpotifyPlaylistSearchResponse.class);
 
 		if (playlistResponse == null || playlistResponse.playlists == null || playlistResponse.playlists().items().isEmpty()) {
-			throw new ResourceNotFoundException("No playlists found for that artist");
+			return "";
 		}
 
 		for (SpotifyPlaylist playlist : playlistResponse.playlists().items()) {
@@ -81,7 +80,7 @@ public class ArtistProfileServiceImpl implements ArtistProfileService {
 			}
 		}
 
-		throw new ResourceNotFoundException("No playlists found for that artist");
+		return "";
 	}
 
 	private record SpotifyExternalUrls(String spotify) {

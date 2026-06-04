@@ -33,5 +33,12 @@ public class GlobalHandlerException {
 				HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(response);
 	}
+	
+	@ExceptionHandler(NotLoggedInException.class)
+	public ResponseEntity<ErrorDTO> handleNotLoggedInError(NotLoggedInException e) {
+		ErrorDTO response = new ErrorDTO(e.getMessage(), "Couldn't find the user",
+				HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(response);
+	}
 
 }
