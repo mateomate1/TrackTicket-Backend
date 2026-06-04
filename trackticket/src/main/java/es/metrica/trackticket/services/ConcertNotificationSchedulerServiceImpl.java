@@ -44,6 +44,10 @@ import es.metrica.trackticket.repositories.UserRepository;
 		private void notifyUsersForDate(LocalDate targetDate, String messageTitle) {
 			List<Concert> concerts = concertRepository.findByConcertDate(targetDate);
 
+			if (concerts.isEmpty()) {
+				return; 
+			}
+
 			for (Concert concert : concerts) {
 				
 				List<User> usersWithFavouriteConcert = userRepository.findByFavouriteConcertsContains(concert);
