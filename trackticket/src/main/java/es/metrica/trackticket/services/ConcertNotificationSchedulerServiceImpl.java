@@ -45,27 +45,27 @@ import es.metrica.trackticket.repositories.UserRepository;
 		private void notifyUsersForDate(LocalDate targetDate, String messageTitle) {
 			List<Concert> concerts = concertRepository.findByConcertDate(targetDate);
 
-			if (concerts.isEmpty()) {
-				return; 
-			}
+			if (!concerts.isEmpty()) {
+				for (Concert concert : concerts) {
+					
+					List<User> usersWithFavouriteConcert = userRepository.findByFavouriteConcertsContains(concert);
+					
+					for (User user : usersWithFavouriteConcert) {
+						String fullMessage = messageTitle + " para tu concierto: " + concert.getConcertName();
 
-			for (Concert concert : concerts) {
-				
-				List<User> usersWithFavouriteConcert = userRepository.findByFavouriteConcertsContains(concert);
-				
-				for (User user : usersWithFavouriteConcert) {
-					String fullMessage = messageTitle + " para tu concierto de " + concert.getConcertName();
+						Notification notification = new Notification( 
+								fullMessage, 
+								NotificationType.UPCOMING_CONCERT, 
+								user,
+								LocalDateTime.now()
+						);
 
-					Notification notification = new Notification( 
-							fullMessage, 
-							NotificationType.UPCOMING_CONCERT, 
-							user,
-							LocalDateTime.now()
-					);
-
-					notificationRepository.save(notification);
+						notificationRepository.save(notification);
+					}
 				}
 			}
+
+			
 		}
 	
 	
