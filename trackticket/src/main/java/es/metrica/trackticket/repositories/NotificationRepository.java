@@ -17,4 +17,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 	
 	List<Notification> findByUser_IdUser(Long idUser);
 	
+	List<Notification> findByUser_UserSession(String userSession);
+	
+	
+	
 }

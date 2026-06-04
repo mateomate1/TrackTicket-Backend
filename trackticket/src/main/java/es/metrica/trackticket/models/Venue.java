@@ -37,6 +37,12 @@ public class Venue {
 		this.venueLocation = venueLocation;
 		this.venueAddress = venueAddress;
 	}
+	
+	public Venue(String venueName, Location venueLocation, Address venueAddress) {
+		this.venueName = venueName;
+		this.venueLocation = venueLocation;
+		this.venueAddress = venueAddress;
+	}
 
 	public Long getIdVenue() {
 		return idVenue;

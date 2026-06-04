@@ -33,6 +33,11 @@ public class Location {
 		this.longitude = longitude;
 	}
 	
+	public Location(double latitude, double longitude) {
+		this.latitude = latitude;
+		this.longitude = longitude;
+	}
+	
 	public Location() {}
 
 	public Long getIdLocation() {

@@ -32,6 +32,11 @@ public class State {
 		this.stateName = stateName;
 		this.country = country;
 	}
+	
+	public State(String stateName, Country country) {
+		this.stateName = stateName;
+		this.country = country;
+	}
 
 	public Long getIdState() {
 		return idState;
