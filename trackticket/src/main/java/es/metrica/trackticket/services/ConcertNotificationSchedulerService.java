@@ -10,8 +10,5 @@ import es.metrica.trackticket.dto.TokenRequestDTO;
 public interface ConcertNotificationSchedulerService {
 
 	void checkUpcomingConcerts();
-	List<NotificationResponseDTO> getNotifications(TokenRequestDTO dto);
-	CountResponseDTO countUnread(TokenRequestDTO dto);
-	void readNotification(NotificationRequestDTO dto);
-	void deleteNotification(NotificationRequestDTO dto);
+
 }

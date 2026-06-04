@@ -1,39 +1,37 @@
 	package es.metrica.trackticket.services;
 	
 	import java.time.LocalDate;
-	import java.util.List;
-	import java.util.stream.Collectors;
-	
-	import org.springframework.scheduling.annotation.Scheduled;
-	import org.springframework.stereotype.Service;
-	
-	import es.metrica.trackticket.dto.CountResponseDTO;
-	import es.metrica.trackticket.dto.NotificationRequestDTO;
-	import es.metrica.trackticket.dto.NotificationResponseDTO;
-	import es.metrica.trackticket.dto.TokenRequestDTO;
-	import es.metrica.trackticket.models.Concert;
-	import es.metrica.trackticket.models.Notification;
-	import es.metrica.trackticket.models.NotificationType;
-	import es.metrica.trackticket.models.User;
-	import es.metrica.trackticket.repositories.ConcertRepository;
-	import es.metrica.trackticket.repositories.NotificationRepository;
+import java.util.List;
+
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import es.metrica.trackticket.models.Concert;
+import es.metrica.trackticket.models.Notification;
+import es.metrica.trackticket.models.NotificationType;
+import es.metrica.trackticket.models.User;
+import es.metrica.trackticket.repositories.ConcertRepository;
+import es.metrica.trackticket.repositories.NotificationRepository;
+import es.metrica.trackticket.repositories.UserRepository;
 	
 	@Service
 	public class ConcertNotificationSchedulerServiceImpl implements ConcertNotificationSchedulerService{
 	
 		private final ConcertRepository concertRepository;
 		private final NotificationRepository notificationRepository;
+		private final UserRepository userRepository;
 	
 		
 		
-		public ConcertNotificationSchedulerServiceImpl(ConcertRepository concertRepository,NotificationRepository notificationRepository) {
-			super();
+		public ConcertNotificationSchedulerServiceImpl(ConcertRepository concertRepository, 
+				NotificationRepository notificationRepository, UserRepository userRepository) {
 			this.concertRepository = concertRepository;
 			this.notificationRepository = notificationRepository;
+			this.userRepository = userRepository;
 		}
 	
 		@Override
-		@Scheduled(cron = "0 0 10 * * ?")
+		@Scheduled(cron = "0 0 5 * * ?")
 		public void checkUpcomingConcerts() {
 			LocalDate today = LocalDate.now();
 			LocalDate inOneMonth = today.plusMonths(1);	
@@ -44,15 +42,15 @@
 		}
 		
 		private void notifyUsersForDate(LocalDate targetDate, String messageTitle) {
-			List<Concert> concerts;
-	
-			concerts = concertRepository.findByConcertDate(targetDate);
-			
-	
+			List<Concert> concerts = concertRepository.findByConcertDate(targetDate);
+
 			for (Concert concert : concerts) {
-				for (User user : concert.getUsers()) {
-	
+				
+				List<User> usersWithFavouriteConcert = userRepository.findByFavouriteConcertsContains(concert);
+				
+				for (User user : usersWithFavouriteConcert) {
 					String fullMessage = messageTitle + " para tu concierto de " + concert.getConcertName();
+
 					Notification notification = new Notification(
 							null, 
 							false, 
@@ -60,40 +58,11 @@
 							NotificationType.UPCOMING_CONCERT, 
 							user
 					);
-					
+
 					notificationRepository.save(notification);
 				}
 			}
 		}
 	
-		@Override
-		public List<NotificationResponseDTO> getNotifications(TokenRequestDTO dto) {
-			/*User user = userRepository.findByUserSession(dto.token()).orElseThrow(()->new IllegalArgumentException("Sesion invalida"));
-	
-			List<Notification> notifications = notificationRepository.findByUserOrderByCreatedAtDesc(user);
-			
-			
-			return notifications.stream()
-					.map(n -> new NotificationResponseDTO(n.getIdNotification(), n.getMessage(), n.getType().toString(), n.isRead()))
-					.collect(Collectors.toList());*/
-		}
-	
-		@Override
-		public CountResponseDTO countUnread(TokenRequestDTO dto) {
-			
-			return null;
-		}
-	
-		@Override
-		public void readNotification(NotificationRequestDTO dto) {
-			
-			
-		}
-	
-		@Override
-		public void deleteNotification(NotificationRequestDTO dto) {
-			
-			
-		}
 	
 	}
