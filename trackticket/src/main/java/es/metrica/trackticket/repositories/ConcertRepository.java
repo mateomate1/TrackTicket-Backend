@@ -1,4 +1,4 @@
-package es.metrica.trackticket.repositories;
+	package es.metrica.trackticket.repositories;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,5 +23,8 @@ public interface ConcertRepository extends JpaRepository<Concert, Long>{
 	
 	List<Concert> findByUsers_IdUser(Long idUser);
 	
+	List<Concert> findByConcertDate(LocalDate concertDate);
+
 	void deleteByConcertDateBefore(LocalDate date);
+
 }

@@ -111,5 +111,9 @@ public class Concert {
 	public void setArtists(List<Artist> artists) {
 		this.artists = artists;
 	}
+	
+	public List<User> getUsers() {
+	    return users;
+	}
 
 }

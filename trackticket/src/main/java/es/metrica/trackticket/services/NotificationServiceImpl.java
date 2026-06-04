@@ -18,6 +18,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 	private NotificationRepository notificationRepository;
 
+
 	public NotificationServiceImpl(NotificationRepository notificationRepository) {
 		this.notificationRepository = notificationRepository;
 	}
@@ -56,5 +57,4 @@ public class NotificationServiceImpl implements NotificationService {
 		
 		this.notificationRepository.delete(notification);
 	}
-
 }
