@@ -24,4 +24,7 @@ public interface ConcertRepository extends JpaRepository<Concert, Long>{
 	List<Concert> findByUsers_IdUser(Long idUser);
 	
 	List<Concert> findByConcertDate(LocalDate concertDate);
+
+	void deleteByConcertDateBefore(LocalDate date);
+
 }

@@ -1,6 +1,7 @@
 package es.metrica.trackticket.services;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -42,44 +43,15 @@ public class FindAndSaveArtistServiceImpl implements FindAndSaveArtistService {
 				.header("Authorization", "Bearer " + spotifyTokenService.getToken()).retrieve()
 				.body(SpotifyGetArtistResponse.class);
 
-		if (response == null) {
+		if (response == null || response.external_urls() == null) {
 			throw new ResourceNotFoundException("Artist not found");
 		}
 
 		Artist artist = ArtistMapper.mapToArtistWithId(response, spotifyId, artistGenre);
 
-		SpotifyAlbumsResponse albumResponse = spotifyRestClient.get().uri(uriBuilder -> {
-			uriBuilder.path("/artists/{id}/albums").queryParam("market", "ES").queryParam("include_groups", "album")
-					.queryParam("limit", 10);
-			return uriBuilder.build(artist.getExternalIdArtist());
-		}).header("Authorization", "Bearer " + spotifyTokenService.getToken()).retrieve()
-				.body(SpotifyAlbumsResponse.class);
-
-		if (albumResponse == null || albumResponse.items().isEmpty()) {
-			throw new ResourceNotFoundException("No albums found for that artist");
-		}
-
-		List<String> albums = albumResponse.items().stream().map(SpotifyAlbum::name).toList();
-
-		artist.setAlbums(albums);
-
-		SpotifyPlaylistSearchResponse playlistResponse = spotifyRestClient.get().uri(uriBuilder -> {
-			uriBuilder.path("/search").queryParam("q", response.name()).queryParam("type", "playlist")
-					.queryParam("market", "ES").queryParam("limit", 2);
-			return uriBuilder.build();
-		}).header("Authorization", "Bearer " + spotifyTokenService.getToken()).retrieve()
-				.body(SpotifyPlaylistSearchResponse.class);
-
-		if (playlistResponse == null || playlistResponse.playlists == null
-				|| playlistResponse.playlists().items().isEmpty()) {
-			throw new ResourceNotFoundException("No playlists found for that artist");
-		}
-
-		String playlistUrl = playlistResponse.playlists().items().get(0).external_urls().spotify();
-
-		if (playlistUrl == null) {
-			playlistUrl = playlistResponse.playlists().items().get(1).external_urls().spotify();
-		}
+		artist.setAlbums(this.getSpotifyAlbum(spotifyId));
+		
+		String playlistUrl = this.getPlaylistUrl(response.name());
 
 		if (playlistUrl != null) {
 			artist.setPlaylistLink(playlistUrl);
@@ -104,23 +76,22 @@ public class FindAndSaveArtistServiceImpl implements FindAndSaveArtistService {
 
 		Artist artist = ArtistMapper.mapToArtistWithName(artistName, artistGenre, response);
 
-		SpotifyAlbumsResponse albumResponse = spotifyRestClient.get().uri(uriBuilder -> {
-			uriBuilder.path("/artists/{id}/albums").queryParam("market", "ES").queryParam("include_groups", "album")
-					.queryParam("limit", 10);
-			return uriBuilder.build(artist.getExternalIdArtist());
-		}).header("Authorization", "Bearer " + spotifyTokenService.getToken()).retrieve()
-				.body(SpotifyAlbumsResponse.class);
+		artist.setAlbums(this.getSpotifyAlbum(artist.getExternalIdArtist()));
 
-		if (albumResponse == null || albumResponse.items().isEmpty()) {
-			throw new ResourceNotFoundException("No albums found for that artist");
+		artist.setPlaylistLink(this.getPlaylistUrl(artistName));
+
+		Optional<Artist> existingArtist = artistRepository.findByExternalIdArtist(artist.getExternalIdArtist());
+
+		if (existingArtist.isPresent()) {
+			return existingArtist.get();
 		}
 
-		List<String> albums = albumResponse.items().stream().map(SpotifyAlbum::name).toList();
+		return artistRepository.save(artist);
+	}
 
-		artist.setAlbums(albums);
-
+	private String getPlaylistUrl(String artistName) {
 		SpotifyPlaylistSearchResponse playlistResponse = spotifyRestClient.get().uri(uriBuilder -> {
-			uriBuilder.path("/search").queryParam("q", "This is " + artistName).queryParam("type", "playlist")
+			uriBuilder.path("/search").queryParam("q", artistName).queryParam("type", "playlist")
 					.queryParam("market", "ES").queryParam("limit", 2);
 			return uriBuilder.build();
 		}).header("Authorization", "Bearer " + spotifyTokenService.getToken()).retrieve()
@@ -130,18 +101,31 @@ public class FindAndSaveArtistServiceImpl implements FindAndSaveArtistService {
 				|| playlistResponse.playlists().items().isEmpty()) {
 			throw new ResourceNotFoundException("No playlists found for that artist");
 		}
+		
+		if(playlistResponse.playlists().items().get(0) != null) {
+			return playlistResponse.playlists().items().get(0).external_urls().spotify();
+		}
+		
+		if(playlistResponse.playlists().items().get(1) != null) {
+			return playlistResponse.playlists().items().get(1).external_urls().spotify();
+		} else {
+			throw new ResourceNotFoundException("No playlists found for that artist");
+		}
+	}
 
-		String playlistUrl = playlistResponse.playlists().items().get(1).external_urls().spotify();
+	private List<String> getSpotifyAlbum(String artistId) {
+		SpotifyAlbumsResponse albumResponse = spotifyRestClient.get().uri(uriBuilder -> {
+			uriBuilder.path("/artists/{id}/albums").queryParam("market", "ES").queryParam("include_groups", "album")
+					.queryParam("limit", 10);
+			return uriBuilder.build(artistId);
+		}).header("Authorization", "Bearer " + spotifyTokenService.getToken()).retrieve()
+				.body(SpotifyAlbumsResponse.class);
 
-		artist.setPlaylistLink(playlistUrl);
-
-		Optional<Artist> existingArtist = artistRepository.findByExternalIdArtist(artist.getExternalIdArtist());
-
-		if (existingArtist.isPresent()) {
-			return existingArtist.get();
+		if (albumResponse == null || albumResponse.items().isEmpty()) {
+			throw new ResourceNotFoundException("No albums found for that artist");
 		}
 
-		return artistRepository.save(artist);
+		return albumResponse.items().stream().filter(Objects::nonNull).map(SpotifyAlbum::name).toList();
 	}
 
 	private record SpotifyAlbumsResponse(List<SpotifyAlbum> items) {

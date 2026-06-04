@@ -38,6 +38,13 @@ public class Address {
 		this.zipCode = zipCode;
 		this.city = city;
 	}
+	
+	public Address(String firstLine, String secondLine, String zipCode, City city) {
+		this.firstLine = firstLine;
+		this.secondLine = secondLine;
+		this.zipCode = zipCode;
+		this.city = city;
+	}
 
 	public Address() {
 	}

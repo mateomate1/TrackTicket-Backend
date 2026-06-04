@@ -42,6 +42,13 @@ public class Notification {
 		this.user = user;
 	}
 	
+	public Notification(String message, NotificationType type, User user) {
+		this.isRead = false;
+		this.message = message;
+		this.type = type;
+		this.user = user;
+	}
+	
 	protected Notification() {}
 
 	public Long getIdNotification() {
