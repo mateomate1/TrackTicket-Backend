@@ -10,7 +10,9 @@ import es.metrica.trackticket.dto.mapper.NotificationMapper;
 import es.metrica.trackticket.models.Notification;
 import es.metrica.trackticket.repositories.NotificationRepository;
 
+
 public class NotificationServiceImpl implements NotificationService {
+
 
 	private NotificationRepository notificationRepostory;
 
@@ -44,9 +46,6 @@ public class NotificationServiceImpl implements NotificationService {
 
 	}
 
-	/*
-	 * Métodos para los endpoints (listar notificaciones, contar las no leídas,
-	 * marcar como leída y eliminar)
-	 */
+
 
 }
