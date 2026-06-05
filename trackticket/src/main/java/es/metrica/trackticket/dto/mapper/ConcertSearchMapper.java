@@ -89,20 +89,20 @@ public final class ConcertSearchMapper {
 	private record TicketMasterGenre(String name) {
 	}
 
-	private record TicketMasterDates(TicketMasterStart start) {
+	public record TicketMasterDates(TicketMasterStart start) {
 	}
 
-	private record TicketMasterStart(String localDate) {
+	public record TicketMasterStart(String localDate) {
 	}
 
-	private record TicketMasterEmbeddedVenues(List<TicketMasterVenue> venues,
+	public record TicketMasterEmbeddedVenues(List<TicketMasterVenue> venues,
 			List<TickerMasterAttractions> attractions) {
 	}
 
 	private record TickerMasterAttractions(String name, String url) {
 	}
 
-	private record TicketMasterVenue(String name, String postalCode, TicketMasterLocation location,
+	public record TicketMasterVenue(String name, String postalCode, TicketMasterLocation location,
 			TicketMasterAddress address, TicketMasterCity city, TicketMasterState state, TicketMasterCountry country) {
 	}
 
@@ -112,12 +112,12 @@ public final class ConcertSearchMapper {
 	private record TicketMasterCity(String name) {
 	}
 
-	private record TicketMasterState(String name) {
+	public record TicketMasterState(String name) {
 	}
 
 	private record TicketMasterCountry(String name) {
 	}
 
-	private record TicketMasterLocation(String longitude, String latitude) {
+	public record TicketMasterLocation(String longitude, String latitude) {
 	}
 }

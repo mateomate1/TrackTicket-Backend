@@ -77,7 +77,7 @@ class ConcertNotificationSchedulerServiceImplTest {
 
 		Notification savedNotification = notificationCaptor.getValue();
 
-		assertEquals("¡Prepárate! Solo falta 1 mes para tu concierto: Gira de Prueba 2024", savedNotification.getMessage());
+		assertEquals("¡Prepárate! Solo falta 1 mes para tu concierto: Gira de Prueba 2026", savedNotification.getMessage());
 		assertEquals(NotificationType.UPCOMING_CONCERT, savedNotification.getType());
 		assertEquals(mockUser, savedNotification.getUser());
 		assertFalse(savedNotification.isRead());
@@ -99,7 +99,7 @@ class ConcertNotificationSchedulerServiceImplTest {
 
 		Notification savedNotification = notificationCaptor.getValue();
 
-		assertEquals("¡Ya queda poco! Faltan 5 días para tu concierto: Gira de Prueba 2024", savedNotification.getMessage());
+		assertEquals("¡Ya queda poco! Faltan 5 días para tu concierto: Gira de Prueba 2026", savedNotification.getMessage());
 		assertEquals(NotificationType.UPCOMING_CONCERT, savedNotification.getType());
 		assertEquals(mockUser, savedNotification.getUser());
 		assertFalse(savedNotification.isRead());

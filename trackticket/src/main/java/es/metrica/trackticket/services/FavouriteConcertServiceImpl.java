@@ -236,7 +236,7 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
 	
 	
 	
-	private record TicketMasterEvent(
+	public record TicketMasterEvent(
 	        String id,
 	        String name, 
 	        String url,
@@ -245,27 +245,27 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
 	        List<TicketMasterClassification> classifications
 	    ) {}
 
-    private record TicketMasterDates(TicketMasterStart start) {}
+	public record TicketMasterDates(TicketMasterStart start) {}
 
-    private record TicketMasterStart(String localDate, String localTime) {}
+	public record TicketMasterStart(String localDate, String localTime) {}
 
-    private record TicketMasterEmbeddedVenues(
+	public record TicketMasterEmbeddedVenues(
         List<TicketMasterVenue> venues,
         List<TicketMasterAttraction> attractions
     ) {}
 
-    private record TicketMasterVenue(
+	public record TicketMasterVenue(
     		String name, String postalCode, TicketMasterLocation location,
 			TicketMasterAddress address, TicketMasterState state, TicketMasterCountry country,TicketMasterCity city 
     ) {}
-    private record TicketMasterCity(String name) {}
-    private record TicketMasterAddress(String line1, String line2) {}
-    private record TicketMasterState(String name) {}
-    private record TicketMasterCountry(String name) {}
-    private record TicketMasterLocation(String latitude, String longitude) {}
-    private record TicketMasterAttraction(String name) {}
-    private record TicketMasterClassification(TicketMasterGenre genre) {}
-    private record TicketMasterGenre(String name) {}
+	public record TicketMasterCity(String name) {}
+	public record TicketMasterAddress(String line1, String line2) {}
+	public record TicketMasterState(String name) {}
+	public record TicketMasterCountry(String name) {}
+	public record TicketMasterLocation(String latitude, String longitude) {}
+	public record TicketMasterAttraction(String name) {}
+	public record TicketMasterClassification(TicketMasterGenre genre) {}
+	public record TicketMasterGenre(String name) {}
 		
 	
 
