@@ -13,6 +13,8 @@ import javax.crypto.Cipher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import es.metrica.trackticket.exception.EncryptationFailureException;
@@ -82,6 +84,23 @@ public class EncryptionServiceTest {
 				() -> badService.decrypt(base64));
 		
 		assertEquals("Clave inválida.", e.getMessage());
+	}
+	
+	@Test
+	void decrypt_NoSuchAlgorithmException_ThrowsEFE() {
+		
+		try (MockedStatic<Cipher> mockedCipher = Mockito.mockStatic(Cipher.class)) {
+			
+			
+			mockedCipher.when(() -> Cipher.getInstance("RSA"))
+						.thenThrow(new NoSuchAlgorithmException("Fallo a proposito para subbir coverage"));
+
+			
+			Exception e = assertThrows(EncryptationFailureException.class,
+					() -> encryptionService.decrypt("cualquierCosa"));
+
+			assertEquals("Fallo a proposito para subbir coverage", e.getMessage());
+		}
 	}
 	
 	
