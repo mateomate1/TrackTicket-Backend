@@ -50,14 +50,6 @@ public class User {
 	protected User() {
 	}
 
-	public Long getIdUser() {
-		return idUser;
-	}
-
-	public void setIdUser(Long idUser) {
-		this.idUser = idUser;
-	}
-
 	public String getUserName() {
 		return userName;
 	}
@@ -94,15 +86,7 @@ public class User {
 		return favouriteArtists;
 	}
 
-	public void setFavouriteArtists(List<Artist> favouriteArtists) {
-		this.favouriteArtists = favouriteArtists;
-	}
-
 	public List<Concert> getFavouriteConcerts() {
 		return favouriteConcerts;
-	}
-
-	public void setFavouriteConcerts(List<Concert> favouriteConcerts) {
-		this.favouriteConcerts = favouriteConcerts;
 	}
 }

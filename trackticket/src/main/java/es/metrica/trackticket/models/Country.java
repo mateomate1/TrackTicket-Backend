@@ -18,24 +18,11 @@ public class Country {
 	@Column (name = "country_name", nullable = false)
 	private String countryName;
 	
-	public Country(Long idCountry, String countryName) {
-		this.idCountry = idCountry;
-		this.countryName = countryName;
-	}
-	
 	public Country(String countryName) {
 		this.countryName = countryName;
 	}
 	
 	public Country() {}
-
-	public Long getIdCountry() {
-		return idCountry;
-	}
-
-	public void setIdCountry(Long idCountry) {
-		this.idCountry = idCountry;
-	}
 
 	public String getCountryName() {
 		return countryName;

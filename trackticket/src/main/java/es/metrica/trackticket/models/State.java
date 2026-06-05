@@ -26,24 +26,10 @@ public class State {
 	private Country country;
 
 	public State() {}
-
-	public State(Long idState, String stateName, Country country) {
-		this.idState = idState;
-		this.stateName = stateName;
-		this.country = country;
-	}
 	
 	public State(String stateName, Country country) {
 		this.stateName = stateName;
 		this.country = country;
-	}
-
-	public Long getIdState() {
-		return idState;
-	}
-
-	public void setIdState(Long idState) {
-		this.idState = idState;
 	}
 
 	public String getStateName() {
