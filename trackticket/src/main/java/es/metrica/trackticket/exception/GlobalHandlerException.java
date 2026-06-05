@@ -51,7 +51,7 @@ public class GlobalHandlerException {
 	
 	@ExceptionHandler(EncryptationFailureException.class)
 	public ResponseEntity<ErrorDTO> handleEncryptationFailureException(EncryptationFailureException e) {
-		ErrorDTO response = new ErrorDTO(e.getMessage(), "Something went wrong with the client response",
+		ErrorDTO response = new ErrorDTO(e.getMessage(), "Error decrypting data",
 				HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(response);
 	}
