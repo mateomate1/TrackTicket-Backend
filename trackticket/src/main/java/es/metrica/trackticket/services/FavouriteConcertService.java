@@ -10,4 +10,5 @@ public interface FavouriteConcertService {
 	void addFavConcert(ConcertFavoriteRequestDTO dto);
 	void removeFavConcert(ConcertFavoriteRequestDTO dto);
 	List<ConcertResponseDTO> getFavConcertList(TokenRequestDTO dto);
+	boolean isFavouriteConcert(ConcertFavoriteRequestDTO dto);
 }
