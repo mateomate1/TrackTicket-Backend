@@ -36,15 +36,13 @@ public class EncryptionService {
 			try {
 				cipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
 			} catch (InvalidKeyException e) {
-				throw new EncryptationFailureException("Los datos son inválidos o están corruptos.");
+				throw new EncryptationFailureException("Clave inválida.");
 			}
 
 			try {
 				return new String(cipher.doFinal(Base64.getDecoder().decode(encryptedData)));
-			} catch (IllegalBlockSizeException e) {
+			} catch (IllegalBlockSizeException | BadPaddingException e) {
 				throw new EncryptationFailureException("Los datos son inválidos o están corruptos.");
-			} catch (BadPaddingException e) {
-				throw new EncryptationFailureException("Los datos son inválidos o están corruptos.");
-			}
+			} 
 	}
 }
