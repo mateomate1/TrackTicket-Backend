@@ -49,14 +49,6 @@ public class Address {
 	public Address() {
 	}
 
-	public Long getIdAddress() {
-		return idAddress;
-	}
-
-	public void setIdAddress(Long idAddress) {
-		this.idAddress = idAddress;
-	}
-
 	public String getFirstLine() {
 		return firstLine;
 	}

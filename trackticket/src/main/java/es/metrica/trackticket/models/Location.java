@@ -40,14 +40,6 @@ public class Location {
 	
 	public Location() {}
 
-	public Long getIdLocation() {
-		return idLocation;
-	}
-
-	public void setIdLocation(Long idLocation) {
-		this.idLocation = idLocation;
-	}
-
 	public double getLatitude() {
 		return latitude;
 	}

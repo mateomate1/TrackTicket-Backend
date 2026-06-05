@@ -311,8 +311,9 @@ class FindAndSaveArtistServiceTest {
 												""",
 						MediaType.APPLICATION_JSON));
 
-		mockServer.expect(MockRestRequestMatchers.requestTo(
-				"https://api.spotify.com/v1/search?q=Cruz%20Cafun%C3%A9&type=playlist&market=ES&limit=2"))
+		mockServer
+				.expect(MockRestRequestMatchers.requestTo(
+						"https://api.spotify.com/v1/search?q=Cruz%20Cafun%C3%A9&type=playlist&market=ES&limit=2"))
 				.andRespond(MockRestResponseCreators.withSuccess(
 						"""
 														{
@@ -692,8 +693,9 @@ class FindAndSaveArtistServiceTest {
 												""",
 						MediaType.APPLICATION_JSON));
 
-		mockServer.expect(MockRestRequestMatchers.requestTo(
-				"https://api.spotify.com/v1/search?q=Cruz%20Cafun%C3%A9&type=playlist&market=ES&limit=2"))
+		mockServer
+				.expect(MockRestRequestMatchers.requestTo(
+						"https://api.spotify.com/v1/search?q=Cruz%20Cafun%C3%A9&type=playlist&market=ES&limit=2"))
 				.andRespond(MockRestResponseCreators.withSuccess(
 						"""
 														{
@@ -1041,8 +1043,9 @@ class FindAndSaveArtistServiceTest {
 												""",
 						MediaType.APPLICATION_JSON));
 
-		mockServer.expect(MockRestRequestMatchers.requestTo(
-				"https://api.spotify.com/v1/search?q=Cruz%20Cafun%C3%A9&type=playlist&market=ES&limit=2"))
+		mockServer
+				.expect(MockRestRequestMatchers.requestTo(
+						"https://api.spotify.com/v1/search?q=Cruz%20Cafun%C3%A9&type=playlist&market=ES&limit=2"))
 				.andRespond(MockRestResponseCreators.withSuccess(
 						"""
 														{
@@ -1166,11 +1169,11 @@ class FindAndSaveArtistServiceTest {
 		mockServer.verify();
 		assertEquals("No se encuentran resultados para ese artista.", e.getMessage());
 	}
-
+	
 	@Test
-	@DisplayName("Tests if getPlaylistUrl throws ResourceNotFoundException when no playlists are found")
-	void getPlaylistUrlNoResults() {
-		String idArtist = "0jeYkqwckGJoHQhhXwgzk3";
+	@DisplayName("Tests if getArtistByNameFromSpotifyAndSave searches for the artist in Spotify and saves and returns the result with an empty album list")
+	void getArtistByNameFromSpotifyAndSaveWhenAlbumsItemsIsEmpty() {
+		String name = "Cruz Cafuné";
 		String genre = "Rap/HipHop";
 
 		mockServer.expect(MockRestRequestMatchers.requestTo("https://accounts.spotify.com/api/token"))
@@ -1179,43 +1182,226 @@ class FindAndSaveArtistServiceTest {
 						MediaType.APPLICATION_JSON));
 
 		mockServer
-				.expect(MockRestRequestMatchers.requestTo("https://api.spotify.com/v1/artists/0jeYkqwckGJoHQhhXwgzk3"))
+				.expect(MockRestRequestMatchers.requestTo(
+						"https://api.spotify.com/v1/search?q=Cruz%20Cafun%C3%A9&type=artist&market=ES&limit=1"))
 				.andRespond(MockRestResponseCreators.withSuccess(
 						"""
-								{
-										  "external_urls": {
-										    "spotify": "https://open.spotify.com/artist/0jeYkqwckGJoHQhhXwgzk3"
-										  },
-										  "followers": {
-										    "href": null,
-										    "total": 548208
-										  },
-										  "genres": [],
-										  "href": "https://api.spotify.com/v1/artists/0jeYkqwckGJoHQhhXwgzk3?locale=es-ES%2Ces%3Bq%3D0.8",
-										  "id": "0jeYkqwckGJoHQhhXwgzk3",
-										  "images": [
-										    {
-										      "url": "https://i.scdn.co/image/ab6761610000e5eb9f52199eefb0ccb6f69afe2c",
-										      "height": 640,
-										      "width": 640
-										    },
-										    {
-										      "url": "https://i.scdn.co/image/ab676161000051749f52199eefb0ccb6f69afe2c",
-										      "height": 320,
-										      "width": 320
-										    },
-										    {
-										      "url": "https://i.scdn.co/image/ab6761610000f1789f52199eefb0ccb6f69afe2c",
-										      "height": 160,
-										      "width": 160
-										    }
-										  ],
-										  "name": "Cruz Cafuné",
-										  "popularity": 67,
-										  "type": "artist",
-										  "uri": "spotify:artist:0jeYkqwckGJoHQhhXwgzk3"
-										}
-																								""",
+														{
+								  "artists": {
+								    "href": "https://api.spotify.com/v1/search?offset=0&limit=1&query=Cruz%20Cafun%C3%A9&type=artist&market=ES&locale=es-ES,es;q%3D0.8",
+								    "limit": 1,
+								    "next": "https://api.spotify.com/v1/search?offset=1&limit=1&query=Cruz%20Cafun%C3%A9&type=artist&market=ES&locale=es-ES,es;q%3D0.8",
+								    "offset": 0,
+								    "previous": null,
+								    "total": 801,
+								    "items": [
+								      {
+								        "external_urls": {
+								          "spotify": "https://open.spotify.com/artist/0jeYkqwckGJoHQhhXwgzk3"
+								        },
+								        "followers": {
+								          "href": null,
+								          "total": 547294
+								        },
+								        "genres": [],
+								        "href": "https://api.spotify.com/v1/artists/0jeYkqwckGJoHQhhXwgzk3",
+								        "id": "0jeYkqwckGJoHQhhXwgzk3",
+								        "images": [
+								          {
+								            "url": "https://i.scdn.co/image/ab6761610000e5eb9f52199eefb0ccb6f69afe2c",
+								            "height": 640,
+								            "width": 640
+								          },
+								          {
+								            "url": "https://i.scdn.co/image/ab676161000051749f52199eefb0ccb6f69afe2c",
+								            "height": 320,
+								            "width": 320
+								          },
+								          {
+								            "url": "https://i.scdn.co/image/ab6761610000f1789f52199eefb0ccb6f69afe2c",
+								            "height": 160,
+								            "width": 160
+								          }
+								        ],
+								        "name": "Cruz Cafuné",
+								        "popularity": 67,
+								        "type": "artist",
+								        "uri": "spotify:artist:0jeYkqwckGJoHQhhXwgzk3"
+								      }
+								    ]
+								  }
+								}
+														""",
+						MediaType.APPLICATION_JSON));
+
+		mockServer.expect(MockRestRequestMatchers.requestTo(
+				"https://api.spotify.com/v1/artists/0jeYkqwckGJoHQhhXwgzk3/albums?market=ES&include_groups=album&limit=10"))
+				.andRespond(MockRestResponseCreators.withSuccess(
+						"""
+												{
+								  "href": "https://api.spotify.com/v1/artists/0jeYkqwckGJoHQhhXwgzk3/albums?offset=0&limit=10&market=ES&locale=es-ES,es;q%3D0.8&include_groups=album",
+								  "limit": 10,
+								  "next": null,
+								  "offset": 0,
+								  "previous": null,
+								  "total": 4,
+								  "items": [
+								  ]
+								}
+												""",
+						MediaType.APPLICATION_JSON));
+
+		mockServer
+				.expect(MockRestRequestMatchers.requestTo(
+						"https://api.spotify.com/v1/search?q=Cruz%20Cafun%C3%A9&type=playlist&market=ES&limit=2"))
+				.andRespond(MockRestResponseCreators.withSuccess(
+						"""
+														{
+								  "playlists": {
+								    "href": "https://api.spotify.com/v1/search?offset=0&limit=2&query=Cruz%20Cafun%C3%A9&type=playlist&market=ES&locale=es-ES,es;q%3D0.8",
+								    "limit": 2,
+								    "next": "https://api.spotify.com/v1/search?offset=2&limit=2&query=Cruz%20Cafun%C3%A9&type=playlist&market=ES&locale=es-ES,es;q%3D0.8",
+								    "offset": 0,
+								    "previous": null,
+								    "total": 3,
+								    "items": [
+								      {
+								        "collaborative": false,
+								        "description": "",
+								        "external_urls": {
+								          "spotify": "https://open.spotify.com/playlist/2RY8A6sFNkxCDIVtGW1ImG"
+								        },
+								        "href": "https://api.spotify.com/v1/playlists/2RY8A6sFNkxCDIVtGW1ImG",
+								        "id": "2RY8A6sFNkxCDIVtGW1ImG",
+								        "images": [
+								          {
+								            "url": "https://mosaic.scdn.co/640/ab67616d00001e021aaada2ba7cfd29031862430ab67616d00001e024102f96ba4b1df4dfe8bc35fab67616d00001e02a815c1e10f3081ad68108ff5ab67616d00001e02eca0def33e1edf19b76d1aef",
+								            "height": 640,
+								            "width": 640
+								          },
+								          {
+								            "url": "https://mosaic.scdn.co/300/ab67616d00001e021aaada2ba7cfd29031862430ab67616d00001e024102f96ba4b1df4dfe8bc35fab67616d00001e02a815c1e10f3081ad68108ff5ab67616d00001e02eca0def33e1edf19b76d1aef",
+								            "height": 300,
+								            "width": 300
+								          },
+								          {
+								            "url": "https://mosaic.scdn.co/60/ab67616d00001e021aaada2ba7cfd29031862430ab67616d00001e024102f96ba4b1df4dfe8bc35fab67616d00001e02a815c1e10f3081ad68108ff5ab67616d00001e02eca0def33e1edf19b76d1aef",
+								            "height": 60,
+								            "width": 60
+								          }
+								        ],
+								        "name": "Best of Cruz Cafuné",
+								        "owner": {
+								          "external_urls": {
+								            "spotify": "https://open.spotify.com/user/1148401953"
+								          },
+								          "href": "https://api.spotify.com/v1/users/1148401953",
+								          "id": "1148401953",
+								          "type": "user",
+								          "uri": "spotify:user:1148401953",
+								          "display_name": "Pedro Poveda Moguer"
+								        },
+								        "public": true,
+								        "snapshot_id": "AAAAqm6pdY0Bz/0oKWE3QP3E5VNGf9kR",
+								        "items": {
+								          "href": "https://api.spotify.com/v1/playlists/2RY8A6sFNkxCDIVtGW1ImG/items",
+								          "total": 85
+								        },
+								        "tracks": {
+								          "href": "https://api.spotify.com/v1/playlists/2RY8A6sFNkxCDIVtGW1ImG/tracks",
+								          "total": 85
+								        },
+								        "type": "playlist",
+								        "uri": "spotify:playlist:2RY8A6sFNkxCDIVtGW1ImG",
+								        "primary_color": null
+								      }
+								    ]
+								  }
+								}
+														""",
+						MediaType.APPLICATION_JSON));
+
+		Artist artist = new Artist("0jeYkqwckGJoHQhhXwgzk3", name);
+
+		artist.setMusicGenre(genre);
+		artist.setSpotifyLink("https://open.spotify.com/artist/0jeYkqwckGJoHQhhXwgzk3");
+		artist.setArtistImageUrl("https://i.scdn.co/image/ab6761610000e5eb9f52199eefb0ccb6f69afe2c");
+		artist.setAlbums(
+				List.of());
+		artist.setPlaylistLink("https://open.spotify.com/playlist/2RY8A6sFNkxCDIVtGW1ImG");
+
+		when(artistRepository.findByExternalIdArtist(artist.getExternalIdArtist())).thenReturn(Optional.empty());
+		when(artistRepository.save(any())).thenReturn(artist);
+
+		Artist result = findAndSaveArtistService.getArtistByNameFromSpotifyAndSave(name, genre);
+
+		mockServer.verify();
+		verify(artistRepository).save(any());
+		assertEquals(artist, result);
+	}
+	
+	@Test
+	@DisplayName("Tests if getArtistByNameFromSpotifyAndSave searches for the artist in Spotify and saves and returns the result with an empty playlist link when its empty")
+	void getArtistByNameFromSpotifyAndSaveWhenPlaylistItemsEmpty() {
+		String name = "Cruz Cafuné";
+		String genre = "Rap/HipHop";
+
+		mockServer.expect(MockRestRequestMatchers.requestTo("https://accounts.spotify.com/api/token"))
+				.andRespond(MockRestResponseCreators.withSuccess(
+						"{\"access_token\":\"b1928beo9wefo9sa8dfg\", \"expires_in\":3600}",
+						MediaType.APPLICATION_JSON));
+
+		mockServer
+				.expect(MockRestRequestMatchers.requestTo(
+						"https://api.spotify.com/v1/search?q=Cruz%20Cafun%C3%A9&type=artist&market=ES&limit=1"))
+				.andRespond(MockRestResponseCreators.withSuccess(
+						"""
+														{
+								  "artists": {
+								    "href": "https://api.spotify.com/v1/search?offset=0&limit=1&query=Cruz%20Cafun%C3%A9&type=artist&market=ES&locale=es-ES,es;q%3D0.8",
+								    "limit": 1,
+								    "next": "https://api.spotify.com/v1/search?offset=1&limit=1&query=Cruz%20Cafun%C3%A9&type=artist&market=ES&locale=es-ES,es;q%3D0.8",
+								    "offset": 0,
+								    "previous": null,
+								    "total": 801,
+								    "items": [
+								      {
+								        "external_urls": {
+								          "spotify": "https://open.spotify.com/artist/0jeYkqwckGJoHQhhXwgzk3"
+								        },
+								        "followers": {
+								          "href": null,
+								          "total": 547294
+								        },
+								        "genres": [],
+								        "href": "https://api.spotify.com/v1/artists/0jeYkqwckGJoHQhhXwgzk3",
+								        "id": "0jeYkqwckGJoHQhhXwgzk3",
+								        "images": [
+								          {
+								            "url": "https://i.scdn.co/image/ab6761610000e5eb9f52199eefb0ccb6f69afe2c",
+								            "height": 640,
+								            "width": 640
+								          },
+								          {
+								            "url": "https://i.scdn.co/image/ab676161000051749f52199eefb0ccb6f69afe2c",
+								            "height": 320,
+								            "width": 320
+								          },
+								          {
+								            "url": "https://i.scdn.co/image/ab6761610000f1789f52199eefb0ccb6f69afe2c",
+								            "height": 160,
+								            "width": 160
+								          }
+								        ],
+								        "name": "Cruz Cafuné",
+								        "popularity": 67,
+								        "type": "artist",
+								        "uri": "spotify:artist:0jeYkqwckGJoHQhhXwgzk3"
+								      }
+								    ]
+								  }
+								}
+														""",
 						MediaType.APPLICATION_JSON));
 
 		mockServer.expect(MockRestRequestMatchers.requestTo(
@@ -1415,8 +1601,9 @@ class FindAndSaveArtistServiceTest {
 												""",
 						MediaType.APPLICATION_JSON));
 
-		mockServer.expect(MockRestRequestMatchers.requestTo(
-				"https://api.spotify.com/v1/search?q=Cruz%20Cafun%C3%A9&type=playlist&market=ES&limit=2"))
+		mockServer
+				.expect(MockRestRequestMatchers.requestTo(
+						"https://api.spotify.com/v1/search?q=Cruz%20Cafun%C3%A9&type=playlist&market=ES&limit=2"))
 				.andRespond(MockRestResponseCreators.withSuccess(
 						"""
 														{
@@ -1434,27 +1621,29 @@ class FindAndSaveArtistServiceTest {
 														""",
 						MediaType.APPLICATION_JSON));
 
-		Artist artist = new Artist(idArtist, "Cruz Cafuné");
+		Artist artist = new Artist("0jeYkqwckGJoHQhhXwgzk3", name);
 
 		artist.setMusicGenre(genre);
 		artist.setSpotifyLink("https://open.spotify.com/artist/0jeYkqwckGJoHQhhXwgzk3");
 		artist.setArtistImageUrl("https://i.scdn.co/image/ab6761610000e5eb9f52199eefb0ccb6f69afe2c");
 		artist.setAlbums(
 				List.of("blu€s (d€lux€)", "Me Muevo Con Dios", "Moonlight922", "Maracucho Bueno Muere Chiquito"));
+		artist.setPlaylistLink("");
 
 		when(artistRepository.findByExternalIdArtist(artist.getExternalIdArtist())).thenReturn(Optional.empty());
+		when(artistRepository.save(any())).thenReturn(artist);
 
-		Exception e = assertThrows(ResourceNotFoundException.class,
-				() -> findAndSaveArtistService.getArtistFromSpotifyAndSave(idArtist, genre));
+		Artist result = findAndSaveArtistService.getArtistByNameFromSpotifyAndSave(name, genre);
 
 		mockServer.verify();
-		assertEquals("No playlists found for that artist", e.getMessage());
+		verify(artistRepository).save(any());
+		assertEquals(artist, result);
 	}
 	
 	@Test
-	@DisplayName("Tests if getPlaylistUrl throws ResourceNotFoundException when no playlists are found")
-	void getPlaylistUrlNullResults() {
-		String idArtist = "0jeYkqwckGJoHQhhXwgzk3";
+	@DisplayName("Tests if getArtistByNameFromSpotifyAndSave searches for the artist in Spotify and saves and returns the result with an empty playlist (all items null)")
+	void getArtistByNameFromSpotifyAndSaveWhenPlaylistItemsNull() {
+		String name = "Cruz Cafuné";
 		String genre = "Rap/HipHop";
 
 		mockServer.expect(MockRestRequestMatchers.requestTo("https://accounts.spotify.com/api/token"))
@@ -1463,43 +1652,56 @@ class FindAndSaveArtistServiceTest {
 						MediaType.APPLICATION_JSON));
 
 		mockServer
-				.expect(MockRestRequestMatchers.requestTo("https://api.spotify.com/v1/artists/0jeYkqwckGJoHQhhXwgzk3"))
+				.expect(MockRestRequestMatchers.requestTo(
+						"https://api.spotify.com/v1/search?q=Cruz%20Cafun%C3%A9&type=artist&market=ES&limit=1"))
 				.andRespond(MockRestResponseCreators.withSuccess(
 						"""
-								{
-										  "external_urls": {
-										    "spotify": "https://open.spotify.com/artist/0jeYkqwckGJoHQhhXwgzk3"
-										  },
-										  "followers": {
-										    "href": null,
-										    "total": 548208
-										  },
-										  "genres": [],
-										  "href": "https://api.spotify.com/v1/artists/0jeYkqwckGJoHQhhXwgzk3?locale=es-ES%2Ces%3Bq%3D0.8",
-										  "id": "0jeYkqwckGJoHQhhXwgzk3",
-										  "images": [
-										    {
-										      "url": "https://i.scdn.co/image/ab6761610000e5eb9f52199eefb0ccb6f69afe2c",
-										      "height": 640,
-										      "width": 640
-										    },
-										    {
-										      "url": "https://i.scdn.co/image/ab676161000051749f52199eefb0ccb6f69afe2c",
-										      "height": 320,
-										      "width": 320
-										    },
-										    {
-										      "url": "https://i.scdn.co/image/ab6761610000f1789f52199eefb0ccb6f69afe2c",
-										      "height": 160,
-										      "width": 160
-										    }
-										  ],
-										  "name": "Cruz Cafuné",
-										  "popularity": 67,
-										  "type": "artist",
-										  "uri": "spotify:artist:0jeYkqwckGJoHQhhXwgzk3"
-										}
-																								""",
+														{
+								  "artists": {
+								    "href": "https://api.spotify.com/v1/search?offset=0&limit=1&query=Cruz%20Cafun%C3%A9&type=artist&market=ES&locale=es-ES,es;q%3D0.8",
+								    "limit": 1,
+								    "next": "https://api.spotify.com/v1/search?offset=1&limit=1&query=Cruz%20Cafun%C3%A9&type=artist&market=ES&locale=es-ES,es;q%3D0.8",
+								    "offset": 0,
+								    "previous": null,
+								    "total": 801,
+								    "items": [
+								      {
+								        "external_urls": {
+								          "spotify": "https://open.spotify.com/artist/0jeYkqwckGJoHQhhXwgzk3"
+								        },
+								        "followers": {
+								          "href": null,
+								          "total": 547294
+								        },
+								        "genres": [],
+								        "href": "https://api.spotify.com/v1/artists/0jeYkqwckGJoHQhhXwgzk3",
+								        "id": "0jeYkqwckGJoHQhhXwgzk3",
+								        "images": [
+								          {
+								            "url": "https://i.scdn.co/image/ab6761610000e5eb9f52199eefb0ccb6f69afe2c",
+								            "height": 640,
+								            "width": 640
+								          },
+								          {
+								            "url": "https://i.scdn.co/image/ab676161000051749f52199eefb0ccb6f69afe2c",
+								            "height": 320,
+								            "width": 320
+								          },
+								          {
+								            "url": "https://i.scdn.co/image/ab6761610000f1789f52199eefb0ccb6f69afe2c",
+								            "height": 160,
+								            "width": 160
+								          }
+								        ],
+								        "name": "Cruz Cafuné",
+								        "popularity": 67,
+								        "type": "artist",
+								        "uri": "spotify:artist:0jeYkqwckGJoHQhhXwgzk3"
+								      }
+								    ]
+								  }
+								}
+														""",
 						MediaType.APPLICATION_JSON));
 
 		mockServer.expect(MockRestRequestMatchers.requestTo(
@@ -1699,8 +1901,9 @@ class FindAndSaveArtistServiceTest {
 												""",
 						MediaType.APPLICATION_JSON));
 
-		mockServer.expect(MockRestRequestMatchers.requestTo(
-				"https://api.spotify.com/v1/search?q=Cruz%20Cafun%C3%A9&type=playlist&market=ES&limit=2"))
+		mockServer
+				.expect(MockRestRequestMatchers.requestTo(
+						"https://api.spotify.com/v1/search?q=Cruz%20Cafun%C3%A9&type=playlist&market=ES&limit=2"))
 				.andRespond(MockRestResponseCreators.withSuccess(
 						"""
 														{
@@ -1713,6 +1916,7 @@ class FindAndSaveArtistServiceTest {
 								    "total": 3,
 								    "items": [
 								    null,
+								    null,
 								    null
 								    ]
 								  }
@@ -1720,104 +1924,23 @@ class FindAndSaveArtistServiceTest {
 														""",
 						MediaType.APPLICATION_JSON));
 
-		Artist artist = new Artist(idArtist, "Cruz Cafuné");
+		Artist artist = new Artist("0jeYkqwckGJoHQhhXwgzk3", name);
 
 		artist.setMusicGenre(genre);
 		artist.setSpotifyLink("https://open.spotify.com/artist/0jeYkqwckGJoHQhhXwgzk3");
 		artist.setArtistImageUrl("https://i.scdn.co/image/ab6761610000e5eb9f52199eefb0ccb6f69afe2c");
 		artist.setAlbums(
 				List.of("blu€s (d€lux€)", "Me Muevo Con Dios", "Moonlight922", "Maracucho Bueno Muere Chiquito"));
+		artist.setPlaylistLink("");
 
 		when(artistRepository.findByExternalIdArtist(artist.getExternalIdArtist())).thenReturn(Optional.empty());
+		when(artistRepository.save(any())).thenReturn(artist);
 
-		Exception e = assertThrows(ResourceNotFoundException.class,
-				() -> findAndSaveArtistService.getArtistFromSpotifyAndSave(idArtist, genre));
-
-		mockServer.verify();
-		assertEquals("No playlists found for that artist", e.getMessage());
-	}
-	
-	@Test
-	@DisplayName("Tests if getPlaylistUrl throws ResourceNotFoundException when no playlists are found")
-	void getAlbumNoResults() {
-		String idArtist = "0jeYkqwckGJoHQhhXwgzk3";
-		String genre = "Rap/HipHop";
-
-		mockServer.expect(MockRestRequestMatchers.requestTo("https://accounts.spotify.com/api/token"))
-				.andRespond(MockRestResponseCreators.withSuccess(
-						"{\"access_token\":\"b1928beo9wefo9sa8dfg\", \"expires_in\":3600}",
-						MediaType.APPLICATION_JSON));
-
-		mockServer
-				.expect(MockRestRequestMatchers.requestTo("https://api.spotify.com/v1/artists/0jeYkqwckGJoHQhhXwgzk3"))
-				.andRespond(MockRestResponseCreators.withSuccess(
-						"""
-								{
-										  "external_urls": {
-										    "spotify": "https://open.spotify.com/artist/0jeYkqwckGJoHQhhXwgzk3"
-										  },
-										  "followers": {
-										    "href": null,
-										    "total": 548208
-										  },
-										  "genres": [],
-										  "href": "https://api.spotify.com/v1/artists/0jeYkqwckGJoHQhhXwgzk3?locale=es-ES%2Ces%3Bq%3D0.8",
-										  "id": "0jeYkqwckGJoHQhhXwgzk3",
-										  "images": [
-										    {
-										      "url": "https://i.scdn.co/image/ab6761610000e5eb9f52199eefb0ccb6f69afe2c",
-										      "height": 640,
-										      "width": 640
-										    },
-										    {
-										      "url": "https://i.scdn.co/image/ab676161000051749f52199eefb0ccb6f69afe2c",
-										      "height": 320,
-										      "width": 320
-										    },
-										    {
-										      "url": "https://i.scdn.co/image/ab6761610000f1789f52199eefb0ccb6f69afe2c",
-										      "height": 160,
-										      "width": 160
-										    }
-										  ],
-										  "name": "Cruz Cafuné",
-										  "popularity": 67,
-										  "type": "artist",
-										  "uri": "spotify:artist:0jeYkqwckGJoHQhhXwgzk3"
-										}
-																								""",
-						MediaType.APPLICATION_JSON));
-
-		mockServer.expect(MockRestRequestMatchers.requestTo(
-				"https://api.spotify.com/v1/artists/0jeYkqwckGJoHQhhXwgzk3/albums?market=ES&include_groups=album&limit=10"))
-				.andRespond(MockRestResponseCreators.withSuccess(
-						"""
-												{
-								  "href": "https://api.spotify.com/v1/artists/0jeYkqwckGJoHQhhXwgzk3/albums?offset=0&limit=10&market=ES&locale=es-ES,es;q%3D0.8&include_groups=album",
-								  "limit": 10,
-								  "next": null,
-								  "offset": 0,
-								  "previous": null,
-								  "total": 4,
-								  "items": [
-								  ]
-								}
-												""",
-						MediaType.APPLICATION_JSON));
-		
-		Artist artist = new Artist(idArtist, "Cruz Cafuné");
-
-		artist.setMusicGenre(genre);
-		artist.setSpotifyLink("https://open.spotify.com/artist/0jeYkqwckGJoHQhhXwgzk3");
-		artist.setArtistImageUrl("https://i.scdn.co/image/ab6761610000e5eb9f52199eefb0ccb6f69afe2c");
-
-		when(artistRepository.findByExternalIdArtist(artist.getExternalIdArtist())).thenReturn(Optional.empty());
-
-		Exception e = assertThrows(ResourceNotFoundException.class,
-				() -> findAndSaveArtistService.getArtistFromSpotifyAndSave(idArtist, genre));
+		Artist result = findAndSaveArtistService.getArtistByNameFromSpotifyAndSave(name, genre);
 
 		mockServer.verify();
-		assertEquals("No albums found for that artist", e.getMessage());
+		verify(artistRepository).save(any());
+		assertEquals(artist, result);
 	}
 
 }

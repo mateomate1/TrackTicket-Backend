@@ -44,14 +44,6 @@ public class Venue {
 		this.venueAddress = venueAddress;
 	}
 
-	public Long getIdVenue() {
-		return idVenue;
-	}
-
-	public void setIdVenue(Long idVenue) {
-		this.idVenue = idVenue;
-	}
-
 	public String getVenueName() {
 		return venueName;
 	}

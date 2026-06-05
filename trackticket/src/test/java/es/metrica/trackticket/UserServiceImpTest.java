@@ -249,4 +249,31 @@ public class UserServiceImpTest {
 		verify(user, never()).getFavouriteArtists();
 		verify(userRepository, never()).save(user);
 	}
+	
+	@Test
+	void registerWrongEmail() {
+		RegisterRequestDTO dto = new RegisterRequestDTO("usuarioCifrado", "emailCifrado", "passwordCifrada");
+
+		when(encryptionService.decrypt("usuarioCifrado")).thenReturn("usuario");
+		when(encryptionService.decrypt("emailCifrado")).thenReturn("email@test");
+		when(encryptionService.decrypt("passwordCifrada")).thenReturn("password123");
+
+		Exception e = assertThrows(IllegalArgumentException.class, () -> userService.register(dto));
+
+		assertEquals("El email debe tener formato válido", e.getMessage());
+	}
+	
+	@Test
+	void registerWrongPassword() {
+		RegisterRequestDTO dto = new RegisterRequestDTO("usuarioCifrado", "emailCifrado", "passwordCifrada");
+
+		when(encryptionService.decrypt("usuarioCifrado")).thenReturn("usuario");
+		when(encryptionService.decrypt("emailCifrado")).thenReturn("email@test.com");
+		when(encryptionService.decrypt("passwordCifrada")).thenReturn("pass12");
+
+		Exception e = assertThrows(IllegalArgumentException.class, () -> userService.register(dto));
+
+		assertEquals("La contraseña debe tener mínimo 8 caracteres", e.getMessage());
+	}
+	
 }

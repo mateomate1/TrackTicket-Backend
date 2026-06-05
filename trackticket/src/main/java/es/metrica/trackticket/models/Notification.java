@@ -39,14 +39,6 @@ public class Notification {
 	@JoinColumn(name = "id_user", nullable = false)
 	private User user;
 	
-	public Notification(Long idNotification, boolean isRead, String message, NotificationType type, User user) {
-		this.idNotification = idNotification;
-		this.isRead = isRead;
-		this.message = message;
-		this.type = type;
-		this.user = user;
-	}
-	
 	public Notification(String message, NotificationType type, User user, LocalDateTime timestamp) {
 		this.isRead = false;
 		this.message = message;
@@ -61,10 +53,6 @@ public class Notification {
 		return idNotification;
 	}
 
-	public void setIdNotification(Long idNotification) {
-		this.idNotification = idNotification;
-	}
-
 	public boolean isRead() {
 		return isRead;
 	}
@@ -77,35 +65,15 @@ public class Notification {
 		return message;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
 	public NotificationType getType() {
 		return type;
-	}
-
-	public void setType(NotificationType type) {
-		this.type = type;
 	}
 
 	public User getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
-	}
-
 	public LocalDateTime getNotificationTimestamp() {
 		return notificationTimestamp;
 	}
-
-	public void setNotificationTimestamp(LocalDateTime notificationTimestamp) {
-		this.notificationTimestamp = notificationTimestamp;
-	}
-	
-	
-
-	
 }

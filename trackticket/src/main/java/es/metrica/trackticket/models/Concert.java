@@ -79,10 +79,6 @@ public class Concert {
 	public String getConcertName() { 
 		return concertName;
 	}
-
-	public void setConcertName(String concertName) { 
-		this.concertName = concertName;
-	}
 	
 	public void setConcertDate(LocalDate concertDate) {
 		this.concertDate = concertDate;
@@ -90,10 +86,6 @@ public class Concert {
 
 	public String getSellLink() {
 		return sellLink;
-	}
-
-	public void setSellLink(String sellLink) {
-		this.sellLink = sellLink;
 	}
 
 	public Venue getVenue() {
@@ -110,10 +102,6 @@ public class Concert {
 
 	public void setArtists(List<Artist> artists) {
 		this.artists = artists;
-	}
-	
-	public List<User> getUsers() {
-	    return users;
 	}
 
 }

@@ -12,6 +12,8 @@ import javax.crypto.NoSuchPaddingException;
 
 import org.springframework.stereotype.Service;
 
+import es.metrica.trackticket.exception.EncryptationFailureException;
+
 @Service
 public class EncryptionService {
 
@@ -24,15 +26,23 @@ public class EncryptionService {
 
 	public String decrypt(String encryptedData) {
 
-		try {
+			Cipher cipher;
+			try {
+				cipher = Cipher.getInstance("RSA");
+			} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+				throw new EncryptationFailureException(e.getMessage());
+			} 
 
-			Cipher cipher = Cipher.getInstance("RSA");
+			try {
+				cipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
+			} catch (InvalidKeyException e) {
+				throw new EncryptationFailureException("Clave inválida.");
+			}
 
-			cipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
-
-			return new String(cipher.doFinal(Base64.getDecoder().decode(encryptedData)));
-		} catch (Exception e) {
-			throw new RuntimeException("Error al descodificar");
-		}
+			try {
+				return new String(cipher.doFinal(Base64.getDecoder().decode(encryptedData)));
+			} catch (IllegalBlockSizeException | BadPaddingException e) {
+				throw new EncryptationFailureException("Los datos son inválidos o están corruptos.");
+			} 
 	}
 }

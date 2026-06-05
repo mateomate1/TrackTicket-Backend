@@ -27,12 +27,6 @@ public class City {
 	
 	public City() {}
 	
-	public City(Long idCity, String cityName, State state) {
-		this.idCity = idCity;
-		this.cityName = cityName;
-		this.state = state;
-	}
-	
 	public City(String cityName, State state) {
 		this.cityName = cityName;
 		this.state = state;
@@ -41,18 +35,19 @@ public class City {
 	public Long getIdCity() {
 		return idCity;
 	}
-	public void setIdCity(Long idCity) {
-		this.idCity = idCity;
-	}
+	
 	public String getCityName() {
 		return cityName;
 	}
+	
 	public void setCityName(String cityName) {
 		this.cityName = cityName;
 	}
+	
 	public State getState() {
 		return state;
 	}
+	
 	public void setState(State state) {
 		this.state = state;
 	}
