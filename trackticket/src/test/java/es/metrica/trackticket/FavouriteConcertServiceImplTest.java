@@ -3,7 +3,9 @@ package es.metrica.trackticket;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -11,11 +13,13 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClient;
@@ -28,7 +32,9 @@ import es.metrica.trackticket.models.Address;
 import es.metrica.trackticket.models.Artist;
 import es.metrica.trackticket.models.City;
 import es.metrica.trackticket.models.Concert;
+import es.metrica.trackticket.models.Country;
 import es.metrica.trackticket.models.Location;
+import es.metrica.trackticket.models.State;
 import es.metrica.trackticket.models.User;
 import es.metrica.trackticket.models.Venue;
 import es.metrica.trackticket.repositories.AddressRepository;
@@ -40,6 +46,19 @@ import es.metrica.trackticket.repositories.StateRepository;
 import es.metrica.trackticket.repositories.UserRepository;
 import es.metrica.trackticket.repositories.VenueRepository;
 import es.metrica.trackticket.services.FavouriteConcertServiceImpl;
+import es.metrica.trackticket.services.FavouriteConcertServiceImpl.TicketMasterAddress;
+import es.metrica.trackticket.services.FavouriteConcertServiceImpl.TicketMasterAttraction;
+import es.metrica.trackticket.services.FavouriteConcertServiceImpl.TicketMasterCity;
+import es.metrica.trackticket.services.FavouriteConcertServiceImpl.TicketMasterClassification;
+import es.metrica.trackticket.services.FavouriteConcertServiceImpl.TicketMasterCountry;
+import es.metrica.trackticket.services.FavouriteConcertServiceImpl.TicketMasterDates;
+import es.metrica.trackticket.services.FavouriteConcertServiceImpl.TicketMasterEmbeddedVenues;
+import es.metrica.trackticket.services.FavouriteConcertServiceImpl.TicketMasterEvent;
+import es.metrica.trackticket.services.FavouriteConcertServiceImpl.TicketMasterGenre;
+import es.metrica.trackticket.services.FavouriteConcertServiceImpl.TicketMasterLocation;
+import es.metrica.trackticket.services.FavouriteConcertServiceImpl.TicketMasterStart;
+import es.metrica.trackticket.services.FavouriteConcertServiceImpl.TicketMasterState;
+import es.metrica.trackticket.services.FavouriteConcertServiceImpl.TicketMasterVenue;
 import es.metrica.trackticket.services.FindAndSaveArtistServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
@@ -206,5 +225,97 @@ class FavouriteConcertServiceImplTest {
 		verify(userRepository).findByUserSession(token);
 		verify(userRepository, never()).save(user);
 		assertEquals("El concierto ya está en favoritos", e.getMessage());
+	}
+	
+	@Test
+	@DisplayName("Tests if saveConcert correctly fetches from Ticketmaster and saves all cascading entities")
+	void addFavConcert_NewConcertFromTicketmaster_SavesEverything() {
+		String token = "1234";
+		String idConcierto = "tm_123";
+		ConcertFavoriteRequestDTO dto = new ConcertFavoriteRequestDTO(token, idConcierto);
+
+		User user = new User("usuarioTest", "test@email.com", "password123");
+
+		when(userRepository.findByUserSession(token)).thenReturn(Optional.of(user));
+		when(concertRepository.findByExternalIdConcert(idConcierto)).thenReturn(Optional.empty());
+
+		RestClient.RequestHeadersUriSpec uriSpec = mock(RestClient.RequestHeadersUriSpec.class);
+		RestClient.RequestHeadersSpec headersSpec = mock(RestClient.RequestHeadersSpec.class);
+		RestClient.ResponseSpec responseSpec = mock(RestClient.ResponseSpec.class);
+
+		when(restClient.get()).thenReturn(uriSpec);
+		when(uriSpec.uri(any(Function.class))).thenReturn(headersSpec);
+		when(headersSpec.retrieve()).thenReturn(responseSpec);
+
+		TicketMasterCity tmCity = new TicketMasterCity("Madrid");
+		TicketMasterAddress tmAddress = new TicketMasterAddress("Calle Falsa 123", "S/N");
+		TicketMasterLocation tmLocation = new TicketMasterLocation("40.4530", "-3.6883");
+		TicketMasterState tmState = new TicketMasterState("Madrid");
+		TicketMasterCountry tmCountry = new TicketMasterCountry("Spain");
+
+		TicketMasterVenue tmVenue = new TicketMasterVenue("Estadio Santiago Bernabéu", "28000", tmLocation, tmAddress, tmState, tmCountry, tmCity);
+		TicketMasterAttraction tmAttraction = new TicketMasterAttraction("AC/DC");
+
+		TicketMasterEmbeddedVenues embedded = new TicketMasterEmbeddedVenues(List.of(tmVenue), List.of(tmAttraction));
+
+		TicketMasterStart start = new TicketMasterStart("2026-10-10", "20:00");
+		TicketMasterDates dates = new TicketMasterDates(start);
+
+		TicketMasterGenre genre = new TicketMasterGenre("Rock");
+		TicketMasterClassification classification = new TicketMasterClassification(genre);
+
+		TicketMasterEvent realEvent = new TicketMasterEvent("tm_123", "Concierto Épico", "http://ticketmaster.com", dates, embedded, List.of(classification));
+
+		when(responseSpec.body(any(Class.class))).thenReturn(realEvent);
+
+		when(venueRepository.findByVenueName("Estadio Santiago Bernabéu")).thenReturn(Optional.empty());
+
+		Artist mockArtist = new Artist("extId", "AC/DC");
+		when(findAndSaveArtistService.getArtistByNameFromSpotifyAndSave("AC/DC", "Rock")).thenReturn(mockArtist);
+
+		when(venueRepository.save(any(Venue.class))).thenAnswer(i -> i.getArguments()[0]);
+		when(concertRepository.save(any(Concert.class))).thenAnswer(i -> i.getArguments()[0]);
+
+		favouriteConcertService.addFavConcert(dto);
+
+		verify(locationRepository).save(any(Location.class));
+		verify(countryRespository).save(any(Country.class));
+		verify(staterepository).save(any(State.class));
+		verify(cityRepository).save(any(City.class));
+		verify(addressRepository).save(any(Address.class));
+		verify(venueRepository).save(any(Venue.class));
+		verify(findAndSaveArtistService).getArtistByNameFromSpotifyAndSave("AC/DC", "Rock");
+		verify(concertRepository).save(any(Concert.class));
+	}
+
+	@Test
+	@DisplayName("Tests if saveConcert throws exception when Ticketmaster returns null")
+	void addFavConcert_TicketmasterReturnsNull_ThrowsException() {
+		String token = "1234";
+		String idConcierto = "tm_123";
+		ConcertFavoriteRequestDTO dto = new ConcertFavoriteRequestDTO(token, idConcierto);
+
+		User user = new User("usuarioTest", "test@email.com", "password123");
+		
+		when(userRepository.findByUserSession(token)).thenReturn(Optional.of(user));
+		when(concertRepository.findByExternalIdConcert(idConcierto)).thenReturn(Optional.empty());
+
+		
+		RestClient.RequestHeadersUriSpec uriSpec = mock(RestClient.RequestHeadersUriSpec.class);
+		RestClient.RequestHeadersSpec headersSpec = mock(RestClient.RequestHeadersSpec.class);
+		RestClient.ResponseSpec responseSpec = mock(RestClient.ResponseSpec.class);
+
+		when(restClient.get()).thenReturn(uriSpec);
+		when(uriSpec.uri(any(Function.class))).thenReturn(headersSpec);
+		when(headersSpec.retrieve()).thenReturn(responseSpec);
+		when(responseSpec.body(ArgumentMatchers.any(Class.class))).thenReturn(null);
+
+		
+		Exception e = assertThrows(IllegalArgumentException.class, () -> 
+			favouriteConcertService.addFavConcert(dto)
+		);
+
+		assertEquals("Concierto no encontrado en Ticketmaster", e.getMessage());
+		verify(concertRepository, never()).save(any(Concert.class));
 	}
 }
