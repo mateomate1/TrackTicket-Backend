@@ -57,7 +57,7 @@ public class FavouriteConcertController {
 	@PostMapping("/is-fav")
 	@Operation(summary = "Verificar si un concierto está guardado como favorito o no")
 	public ResponseEntity<Boolean> isFavConcert(@RequestBody ConcertFavoriteRequestDTO dto) {
-		return ResponseEntity.ok(true);
+		return ResponseEntity.ok(favouriteConcertService.isFavouriteConcert(dto));
 	}
 
 }

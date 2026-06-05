@@ -93,13 +93,13 @@ public class EncryptionServiceTest {
 			
 			
 			mockedCipher.when(() -> Cipher.getInstance("RSA"))
-						.thenThrow(new NoSuchAlgorithmException("Fallo a proposito para subbir coverage"));
+						.thenThrow(new NoSuchAlgorithmException("Fallo a propósito para comprobar que se lanza EncryptationFailure"));
 
 			
 			Exception e = assertThrows(EncryptationFailureException.class,
 					() -> encryptionService.decrypt("cualquierCosa"));
 
-			assertEquals("Fallo a proposito para subbir coverage", e.getMessage());
+			assertEquals("Fallo a propósito para comprobar que se lanza EncryptationFailure", e.getMessage());
 		}
 	}
 	

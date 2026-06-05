@@ -2,6 +2,7 @@ package es.metrica.trackticket.services;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -9,8 +10,10 @@ import org.springframework.web.client.RestClient;
 
 import es.metrica.trackticket.dto.ConcertFavoriteRequestDTO;
 import es.metrica.trackticket.dto.ConcertResponseDTO;
+import es.metrica.trackticket.dto.FavouriteArtistRequestDTO;
 import es.metrica.trackticket.dto.TokenRequestDTO;
 import es.metrica.trackticket.dto.VenueDTO;
+import es.metrica.trackticket.exception.NotLoggedInException;
 import es.metrica.trackticket.models.Address;
 import es.metrica.trackticket.models.Artist;
 import es.metrica.trackticket.models.City;
@@ -109,10 +112,24 @@ public class FavouriteConcertServiceImpl implements FavouriteConcertService{
 		
 	}
 	
-	
-	
-	
-	
+	@Override
+	public boolean isFavouriteConcert(ConcertFavoriteRequestDTO dto) {
+
+		User user = userRepository.findByUserSession(dto.token())
+				.orElseThrow(() -> new NotLoggedInException("Not a valid token"));
+
+		Optional<Concert> concert = concertRepository.findByExternalIdConcert(dto.idConcierto());
+		
+		if(concert.isEmpty()) {
+			return false;
+		}
+		
+		if(user.getFavouriteConcerts().contains(concert.get())) {
+			return true;
+		}
+		
+		return false;
+	}
 	
 	private Concert saveConcert(String idConcertTicketmaster) {
 		
